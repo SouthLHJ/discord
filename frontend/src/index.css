@@ -7,9 +7,22 @@ body {
   -moz-osx-font-smoothing: grayscale;
 }
 
+html, body, main {
+	height : 100vh;
+}
+
 code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
     monospace;
+}
+
+
+@media screen and (max-width : 800px){
+  html, body, main {
+    height : 100vh;
+    position: fixed;
+    /* overflow: hidden; */
+  }
 }
 
 
@@ -30,9 +43,29 @@ code {
   }
 }
 
+@keyframes slidein {
+  from{
+    left: -100%;
+  }
+  to{
+    left: 0%;
+  }
+}
+@keyframes slideout {
+  from{
+    left: 0%;
+  }
+  to{
+    left: -100%;
+  }
+}
+
+
 :root  {
   --main-color: #546ce3;
-  --gray-color : #656665;
-  --darkgray-color : #414241;
-  --error-color : #f23b2e;
+  --sub-color: #42BFDD;
+  --gray-color : #3e3e44;
+  --darkgray-color : #292828;
+  --deepgray-color : #1C1C1D;
+  --error-color : #FF6542;
 }

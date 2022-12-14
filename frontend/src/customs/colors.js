@@ -1,6 +1,8 @@
 export const CustomColor = {
     main: "#546ce3",
-    gray : "#656665",
-    darkgray : "#414241",
-    error : "#f23b2e"
+    sub : "#42BFDD",
+    gray : "#3e3e44",
+    darkgray : "#292828",
+    deepgray : "#1C1C1D",
+    error : "#FF6542",
 }

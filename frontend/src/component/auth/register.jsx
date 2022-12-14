@@ -227,7 +227,7 @@ const Register = ()=>{
                             onClick={()=>onLogin()}
                             sx={{pt : "12px"}}   
                         >
-                            <Typography sx={{color :"#b2aafa", cursor :"pointer"}}>이미 계정이 있으신가요?</Typography>
+                            <Typography sx={{color : CustomColor.sub, cursor :"pointer"}}>이미 계정이 있으신가요?</Typography>
                         </Box>
                     </Box>
                 </Box>

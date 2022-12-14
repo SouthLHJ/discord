@@ -76,6 +76,7 @@
         display: flex;
         border-radius: 10px;
         padding : 12px;
+        margin-top: -60px;
     }
 
     .button_box {

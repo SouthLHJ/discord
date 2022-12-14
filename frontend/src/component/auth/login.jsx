@@ -20,6 +20,7 @@ const Login = ()=>{
             return
         }
         setLoad(true);
+        console.log(process.env.REACT_APP_SERVER_URI);
         const rcv = await fetch(`${process.env.REACT_APP_SERVER_URI}/auth/login`,{
             method : "post",
             body : JSON.stringify({
@@ -71,8 +72,8 @@ const Login = ()=>{
             >
                 <Box className={styles.title}>
                     <Box sx={{pb:"12px", display :"flex", flexDirection :"column", alignItems :"center"}}>
-                        <text className={styles.title_text}>돌아오신 것을 환영해요!</text>
-                        <text className={styles.subtitle_text}>다시 만나다니 너무 반가워요!</text>
+                        <span className={styles.title_text}>돌아오신 것을 환영해요!</span>
+                        <span className={styles.subtitle_text}>다시 만나다니 너무 반가워요!</span>
                     </Box>
 
                     <Box className={styles.email_box}>
@@ -113,7 +114,7 @@ const Login = ()=>{
                             onClick={()=>onRegister()}
                             sx={{pt : "12px"}}   
                         >
-                            <Typography sx={{color :"#b2aafa", cursor :"pointer"}}>가입하기</Typography>
+                            <Typography sx={{color : CustomColor.sub, cursor :"pointer"}}>가입하기</Typography>
                         </Box>
                     </Box>
                 </Box>
