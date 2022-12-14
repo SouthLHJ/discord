@@ -2,6 +2,7 @@ import express from "express";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken"
 import dotenv from "dotenv";
+import account from "../../lib/account.js";
 // .env 사용하기
 dotenv.config();
 
@@ -10,44 +11,49 @@ const router = express.Router();
 
 // 로그인
 router.post("/login",async(req,res)=>{
-    // console.log(req.body);
-
+    console.log(req.body);
     try{
-        // 로그인 이력 체크
-        // const data = await User.find 
-        let data = {email : "abc", name :"choco"}
+        // 가입 체크
+        const user = await account.findOne({email : req.body.email})
+        if(user){
+            // 비밀번호 체크
+            const savepw = req.body.pw;
+            const chk = bcrypt.compareSync(savepw,user.pw)
+            // console.log(chk)
 
-        // 비밀번호 체크
-        const savepw = "1234";
-        const chk = bcrypt.compareSync(savepw,"$2a$12$gBBtwEQv50mfloYMUlSoz.HzwOjp5UhjYh6b6ZZRRMCLCr8QZ3t26")
-        // console.log(chk)
+            // 일치하면
+            if(chk){
+                const token = jwt.sign({email : user.email, name : user.name},process.env.JWT_SECRET_KEY,{expiresIn : "2 days"})   
+                return res.status(200).json({result : true, data : token})
+            }else{
+                return res.status(200).json({result : false, error : "비밀번호를 확인해주세요"})
+            }
 
-        // 일치하면
-        if(chk){
-            const token = jwt.sign({email : data.email, name : data.name},process.env.JWT_SECRET_KEY,{expiresIn : "2 days"})   
-            return res.status(200).json({result : true, data : token})
         }else{
-            return res.status(422).json({result : false, error : "password error"})
+            return res.status(200).json({result : false, error : "이메일을 확인해주세요"})
         }
     }catch(e){
 
-        return res.status(200).json({result : false, error : e.message})
+        return res.status(422).json({result : false, error : e.message})
     }
 
 })
 
 // 회원가입
-router.post("/register",(req,res)=>{
+router.post("/register",async(req,res)=>{
     // console.log(req.body);
     try{
-        
-        // password만
-        const hashedPW = bcrypt.hashSync(req.body.password,12);
-        console.log(hashedPW);
-    
-        return res.status(200).json({result : true})
+        const emailchk = await account.findOne({email:req.body.email})
+        if(emailchk){
+            return res.status(201).json({result : false, error : "이미 사용 중인 이메일입니다."})
+        }else{
+            // password hash처리
+            const hashedPW = bcrypt.hashSync(req.body.pw,12);
+            const rst = await account.create({...req.body, pw : hashedPW})
+            return res.status(201).json({result : true, data : rst})
+        }
     }catch(e){
-        return res.status(200).json({result : false, error : e.message})
+        return res.status(500).json({result : false, error : e.message})
     }
 })
 

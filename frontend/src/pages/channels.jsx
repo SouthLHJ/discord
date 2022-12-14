@@ -2,20 +2,21 @@ import { Button, Typography } from "@mui/material";
 import { createBrowserRouter, createRoutesFromElements, Navigate, Route, RouterProvider, Routes  } from "react-router-dom";
 import Login from "../component/auth/login";
 import Register from "../component/auth/register";
+import ChannelsMe from "../component/channels/@me/@me";
 
 
 
 
-const Auth = ()=>{
+const Channels = ()=>{
     return (
         <>
             {/* <Typography>Text</Typography> */}
             <Routes>
-                <Route path="login" element={<Login />}/>
-                <Route path="register" element={<Register />} />
+                <Route path="@me" element={<ChannelsMe />}/>
+                {/* <Route path="register" element={<Register />} /> */}
             </Routes>
         </>
     );
 }
 
-export default Auth
+export default Channels

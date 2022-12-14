@@ -1,0 +1,15 @@
+.box {
+    width : 80px;
+    height: 100vh;
+    position: relative;
+    left: 0;
+    background-color: var(--darkgray-color);
+}
+
+@media screen and (max-width : 800px) {
+    .box {
+        width : 50px;
+        background-color: var(--darkgray-color);
+    }
+    
+}

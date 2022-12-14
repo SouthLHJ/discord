@@ -1,6 +1,8 @@
 import express  from "express";
 import cors from "cors";
 import path from "path";
+import dotenv from "dotenv";
+import mongoose from "mongoose";
 const __dirname = path.resolve();
 
 import AuthRouter from "./router/auth/auth.js"
@@ -21,3 +23,11 @@ app.use("/auth",AuthRouter)
 app.listen(8080,()=>{
     console.log("server open")
 })
+
+
+!async function(){
+    dotenv.config({path : `${process.cwd()}/.env`});
+    const uri = process.env.MONGODB_URI;
+    // console.log(uri)
+    await mongoose.connect(uri, {dbName : "DisordC"})
+}();

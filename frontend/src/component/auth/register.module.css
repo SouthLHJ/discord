@@ -1,0 +1,100 @@
+/* pc */
+.box{
+    width : 500px;
+    height : 550px;
+    background-color : var(--gray-color);
+    display: flex;
+    border-radius: 10px;
+    padding : 24px;
+    position: relative;
+}
+
+.title {
+    width :100%;
+    display : flex;
+    flex-direction:column;
+    align-items : center;
+   
+}
+.title_text {
+    color : white;
+    font-size: 26px;
+    font-weight: bold;
+    padding-bottom:  8px;
+}
+.subtitle_text {
+    color : lightgray;
+    font-size: 15px;
+}
+
+.email_box {
+    width: 100%;
+    padding-bottom:  12px;
+}
+.pw_box {
+    width: 100%;
+    padding-bottom:  12px;
+}
+.name_box {
+    width: 100%;
+    padding-bottom:  12px;
+}
+.birth_box {
+    width: 100%;
+    padding-bottom:  12px;
+}
+
+.formControl {
+    width :calc(35% - 18px);
+    margin-right : 12px;
+}
+.formControl_end {
+    width :calc(35% - 18px);
+}
+
+.button_box {
+    width: 500px;
+    background-color: var(--main-color);
+    color : white;
+    padding-top : 12px;
+    padding-bottom : 12px;
+    text-align: center;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.css-1poimk-MuiPaper-root-MuiMenu-paper-MuiPaper-root-MuiPopover-paper {
+    height: 30%;
+}
+
+
+@media screen and (max-width : 800px){
+    .box{
+        width : 300px;
+        height : 550px;
+        background-color : var(--gray-color);
+        display: flex;
+        border-radius: 10px;
+        padding : 12px;
+    }
+
+    .button_box {
+        width: 300px;
+        background-color: var(--main-color);
+        color : white;
+        padding-top : 12px;
+        padding-bottom : 12px;
+        text-align: center;
+        border-radius: 4px;
+        cursor: pointer;
+    }
+
+    .formControl {
+        width :calc(36% - 18px);
+        margin-right : 12px;
+    }
+    .formControl_end {
+        width :calc(36% - 18px);
+    }
+}
+
