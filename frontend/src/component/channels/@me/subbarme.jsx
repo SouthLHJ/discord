@@ -1,18 +1,12 @@
-import { Box, Divider, Typography } from "@mui/material";
-import styles from "../subbar.module.css"
-import {FaDiscord, FaUserFriends} from "react-icons/fa"
+import { Box, Typography } from "@mui/material";
 import { CustomColor } from "../../../customs/colors";
-import { useContext } from "react";
-import { isMobileContext } from "../../../pages/channels";
+import styles from "./subbarme.module.css"
+import {FaDiscord, FaUserFriends} from "react-icons/fa"
+
 
 function SubbarMe() {
-    const mobileCtx = useContext(isMobileContext)
-
-
     return (
-        <Box className={styles.box}
-            style={{animation : mobileCtx.isMobile ? "slidein 0.8s" : "none"}}
-        >
+        <Box sx={{width: "calc(100% - 24px)", height : "100%", position : "absolute"}}>
             <Box className={styles.search_box}
             >
                 <Typography color={"lightgray"} fontSize={"13px"}>대화 찾기 또는 시작하기</Typography>
@@ -22,6 +16,7 @@ function SubbarMe() {
                 <FaUserFriends style={{fontSize : "25px", color : "white"}}/>
                 <p className={styles.icon_text}>친구</p>
             </Box>
+
         </Box>
       );
 }

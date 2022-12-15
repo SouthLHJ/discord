@@ -1,0 +1,25 @@
+.title {
+    color : white;
+    font-weight: bold;
+}
+.subtitle{
+    color : gray;
+}
+
+.send_button {
+    width : 150px;
+    height: inherit;
+    text-align: center;
+    padding : 8px;
+    background-color: var(--main-color);
+    border-radius: 8px;
+    cursor: pointer;
+    
+}
+
+
+@media screen and (max-width : 510px) {
+    .send_button{
+        width : calc(100% - 16px);
+    }
+}

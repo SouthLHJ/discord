@@ -49,6 +49,7 @@
     padding-left: 4px;
     padding-right: 4px;
     cursor: pointer;
+
 }
 .list_box:hover{
     border-radius:  3px;
@@ -65,11 +66,28 @@
     -ms-user-select: none;
     user-select: none;
 }
-
-
 .select_box{
     background-color: var(--gray-color);
     border-radius: 8px;
+}
+
+.button_box{
+    background-color : green;
+    height : inherit;
+    display : flex;
+    align-items : center;
+    margin-left: 12px;
+    padding-right : 4px;
+    padding-left: 4px;
+    border-radius : 3px;
+    cursor: pointer;
+}
+
+.body_box{
+    width: calc(100% - 48px);
+    padding: 24px;
+    padding-top: 0;
+
 }
 
 @media screen and (max-width : 510px) {

@@ -6,6 +6,7 @@ import mongoose from "mongoose";
 const __dirname = path.resolve();
 
 import AuthRouter from "./router/auth/auth.js"
+import RelateRouter from "./router/relate/relationship.js"
 
 
 const app = express();
@@ -19,6 +20,7 @@ app.use("/static",express.static(path.join(__dirname,"static")))
 
 // 경로 설정
 app.use("/auth",AuthRouter)
+app.use("/relation",RelateRouter)
 
 app.listen(8080,()=>{
     console.log("server open")

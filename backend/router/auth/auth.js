@@ -11,7 +11,7 @@ const router = express.Router();
 
 // 로그인
 router.post("/login",async(req,res)=>{
-    console.log(req.body);
+    // console.log(req.body);
     try{
         // 가입 체크
         const user = await account.findOne({email : req.body.email})
@@ -19,11 +19,11 @@ router.post("/login",async(req,res)=>{
             // 비밀번호 체크
             const savepw = req.body.pw;
             const chk = bcrypt.compareSync(savepw,user.pw)
-            // console.log(chk)
+            // console.log(user._id.toString())
 
             // 일치하면
             if(chk){
-                const token = jwt.sign({email : user.email, name : user.name},process.env.JWT_SECRET_KEY,{expiresIn : "2 days"})   
+                const token = jwt.sign({email : user.email, name : user.name, id : user._id.toString().slice(0,4)},process.env.JWT_SECRET_KEY,{expiresIn : "2 days"})   
                 return res.status(200).json({result : true, data : token})
             }else{
                 return res.status(200).json({result : false, error : "비밀번호를 확인해주세요"})
@@ -37,6 +37,19 @@ router.post("/login",async(req,res)=>{
         return res.status(422).json({result : false, error : e.message})
     }
 
+})
+
+//토큰 체크
+router.post("/autologin",async(req,res)=>{
+    const token = req.body.token;
+    // console.log(token)
+    const data =jwt.verify(token,process.env.JWT_SECRET_KEY);
+    const exp = Number(`${data.exp}000`)
+    if(new Date(exp) > new Date()){
+        return res.status(200).json({result : true, data : {email : data.email, name : data.name, id : data.id}})
+    }else{
+        return res.status(200).json({result : false, error : "만료된 토큰입니다."})
+    }
 })
 
 // 회원가입
@@ -56,7 +69,6 @@ router.post("/register",async(req,res)=>{
         return res.status(500).json({result : false, error : e.message})
     }
 })
-
 
 
 

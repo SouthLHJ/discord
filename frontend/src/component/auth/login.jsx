@@ -1,12 +1,17 @@
 import { Box, CircularProgress, TextField, Typography } from "@mui/material";
+import { useContext } from "react";
 import { useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { UserContext } from "../..";
 import { CustomColor } from "../../customs/colors";
 import { InputField } from "./inputfield";
 import styles from  "./login.module.css";
 
 
 const Login = ()=>{
+    // 로그인 ctx
+    const userCtx = useContext(UserContext)
+
     const [load , setLoad] = useState(false);
     const navigator = useNavigate();
     const [email, setEmail] = useState("");
@@ -20,7 +25,7 @@ const Login = ()=>{
             return
         }
         setLoad(true);
-        console.log(process.env.REACT_APP_SERVER_URI);
+        // console.log(process.env.REACT_APP_SERVER_URI);
         const rcv = await fetch(`${process.env.REACT_APP_SERVER_URI}/auth/login`,{
             method : "post",
             body : JSON.stringify({
@@ -33,6 +38,11 @@ const Login = ()=>{
         })
         const rst = await rcv.json();
         if(rst.result){
+            //context에 저장
+            userCtx.setUser(rst.data);
+            //localstorage에 저장
+            localStorage.setItem("token",JSON.stringify(rst.data));
+            
             ref.current.style.setProperty("animation", "fadeout 0.5s")
             const time = setTimeout(()=>{
                 navigator("/channels/@me");

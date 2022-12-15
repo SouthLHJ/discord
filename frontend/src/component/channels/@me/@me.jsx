@@ -6,7 +6,8 @@ import { CustomColor } from "../../../customs/colors";
 import { isMobileContext } from "../../../pages/channels";
 import SideBar from "../sidebar";
 import MainMe from "./main";
-import SubbarMe from "./subbar";
+import Subbar from "../subbar";
+import SubbarMe from "./subbarme";
 
 
 
@@ -26,7 +27,9 @@ function ChannelsMe() {
             <SideBar setShowSub={setShowSub} showSub={showSub}/>
             {
                 showSub &&
-                <SubbarMe/>
+                <Subbar>
+                    <SubbarMe/>
+                </Subbar>
             }
             {
                 (mobileCtx.isMobile & !showSub) | (!mobileCtx.isMobile)  ?
