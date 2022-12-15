@@ -14,6 +14,7 @@ const Channels = ()=>{
     const userCtx= useContext(UserContext);
     const navigate = useNavigate();
     const [isMobile,setIsMobile] = useState(false);
+
     useEffect(()=>{
         // 로그인 상태인지 아닌지 확인
         if(!userCtx.user){
@@ -21,6 +22,7 @@ const Channels = ()=>{
         }
         // 모바일인지 PC인지 확인
         const user = navigator.userAgent;
+        
         if ( user.indexOf("iPhone") > -1 || user.indexOf("Android") > -1 ) {
             setIsMobile(true);
         }

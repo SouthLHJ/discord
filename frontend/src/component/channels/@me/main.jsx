@@ -2,17 +2,17 @@ import { Box, Divider, Typography } from "@mui/material";
 import styles from "./main.module.css"
 import {FaDiscord, FaUserFriends} from "react-icons/fa"
 import { CustomColor } from "../../../customs/colors";
-import { useContext } from "react";
+import { useContext,useState,useEffect,createContext } from "react";
 import { isMobileContext } from "../../../pages/channels";
 import AddFriends from "./mainbody/addfriend";
-import { useState } from "react";
 import OnlineMe from "./mainbody/online";
 import AllFriendsMe from "./mainbody/all";
 import StayFriendsMe from "./mainbody/staying";
 
+
+
 function MainMe() {
     const mobileCtx = useContext(isMobileContext)
-
     const [menu, setMenu] = useState(0);
 
     let body ;
@@ -34,7 +34,6 @@ function MainMe() {
     return (
         <Box className={styles.box}>
             <Box className={styles.header_box}>
-
                 <Box className={styles.icon_box}>
                     <FaUserFriends style={{fontSize : "25px", color : "white", opacity : 0.5}}/>
                     <p className={styles.icon_text}>친구</p>

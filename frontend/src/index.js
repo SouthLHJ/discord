@@ -12,6 +12,7 @@ function AppProvider({children}) {
   const [user, setUser] = useState(null);
   useEffect(()=>{
     const token = localStorage.getItem("token")
+    
     if(token){
       init();
     }
@@ -35,7 +36,7 @@ function AppProvider({children}) {
     }
   },[])
 
-  console.log(user);
+  // console.log(user);
   return (
     <UserContext.Provider value={{user, setUser}}>
       {children}

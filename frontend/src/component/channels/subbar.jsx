@@ -18,6 +18,7 @@ function Subbar({children}) {
     const navigate = useNavigate();
     const onLogout = ()=>{
         localStorage.removeItem("token");
+        userCtx.setUser(null);
         navigate("/auth/login");
     }
 
@@ -25,13 +26,15 @@ function Subbar({children}) {
         return <p>???????</p>
     }
 
+    
+
     return (
         <>
             <Box className={styles.box}
                 style={{animation : mobileCtx.isMobile ? "slidein 0.8s" : "none"}}
             >   
                 {children}
-                <Box className={styles.user_box}>
+                <Box className={styles.user_box} style={{top : `calc(${window.innerHeight}px - 70px)`}}>
                     <Box sx={{display : "flex", alignItems : "center"}}>
                         <Box sx={{backgroundColor : CustomColor.error, borderRadius : "70%", width : "35px", height :"35px", display : "flex", alignItems : "center", justifyContent :"center"}}>
                             <FaDiscord style={{fontSize : "30px", color : "white"}}/>
@@ -48,7 +51,7 @@ function Subbar({children}) {
                         <Box sx={{ml : "8px"}}>
                             <MdHeadset style={{fontSize : "20px", color : "gray"}}/>
                         </Box>
-                        <Box onClick={()=>onLogout()} sx={{ml : "8px"}}>
+                        <Box onClick={()=>onLogout()} sx={{ml : "8px", cursor : "pointer"}}>
                             <AiFillSetting style={{fontSize : "20px", color : "gray"}}/>
                         </Box>
                     </Box>

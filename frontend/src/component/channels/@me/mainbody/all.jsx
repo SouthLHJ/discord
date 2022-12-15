@@ -1,5 +1,5 @@
 import { Box } from "@mui/material";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { InputField } from "./inputfield";
 import {GoSearch} from "react-icons/go"
 import { useContext } from "react";
@@ -9,6 +9,12 @@ function AllFriendsMe() {
     const mobileCtx = useContext(isMobileContext);
 
     const [username , setUsername] =useState();
+
+    useEffect(()=>{
+        
+    },[])
+
+
 
     let sendButton = (
         <Box sx={{cursor :"pointer", width : "35px", display : "flex", alignItems :"center", justifyContent : "center"}}>
