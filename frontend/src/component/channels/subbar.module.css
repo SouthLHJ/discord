@@ -52,6 +52,19 @@
     /* top : calc(100% - 70px); */
 }
 
+.profile_box{
+    width: 250px;
+    height: 250px;
+    position : absolute;
+    z-index : 100;
+    left: 80px;
+
+    padding : 12px;
+    background-color: var(--darkgray-color);
+    border-radius: 8px;
+    box-shadow: 5px 5px 10px 3px rgb(17, 17, 17);
+}
+
 @media screen and (max-width : 800px) {
     .box {
         width : 200px;
@@ -74,5 +87,9 @@
         height : 60px;
         /* top : calc(100% - 60px); */
         /* bottom : 0; */
+    }
+
+    .profile_box{
+        left: 60px;
     }
 }

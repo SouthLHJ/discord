@@ -27,16 +27,32 @@ router.post("/send",async(req,res)=>{
         return res.status(201).json({result : false, error : "본인에게는 요청할 수 없어요"})
     }
     if(data && dataId.startsWith(id)){
-        const relate = {
-            since : new Date(),
-            type : 0,
-            user1 : user.email,
-            user2 : data.email,
-            createdAt : new Date(),
+        // 이미 보낸 요청인지 확인하기
+        const datas = await relationship.find({$or : [{user1:user.email,user2:data.email},{user1: data.email,user2 :user.email}]})
+        if(datas){
+            return res.status(201).json({result : false, error : "이미 존재하는 요청입니다."})
+        }else{
+            const relate = {
+                since : new Date(),
+                type : 0,
+                user1 : user.email,
+                user2 : data.email,
+                createdAt : new Date(),
+            }
+            
+            // 요청을 받은 사람의 소켓 아이디를 찾는다.
+            if(data.socketId){
+                //웹소켓 서버 불러오고
+                const io = req.app.get("io");
+                io.to(data.socketId).emit("add-friends",data)
+            }
+
+            const rst = await relationship.create(relate)
+            return res.status(201).json({result : true, data : rst})
+
         }
 
-        const rst = await relationship.create(relate)
-        return res.status(201).json({result : true, data : rst})
+
     }else{
         if(!data){
             return res.status(200).json({result : false, error : "없는 정보 요청 실패"})

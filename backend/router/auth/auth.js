@@ -24,7 +24,7 @@ router.post("/login",async(req,res)=>{
             // 일치하면
             if(chk){
                 const token = jwt.sign({email : user.email, name : user.name, id : user._id.toString().slice(0,4)},process.env.JWT_SECRET_KEY,{expiresIn : "2 days"})   
-                return res.status(200).json({result : true, data : token})
+                return res.status(200).json({result : true, token : token, data : {email : user.email, name : user.name, id : user._id.toString().slice(0,4),avatar: user.avatar}})
             }else{
                 return res.status(200).json({result : false, error : "비밀번호를 확인해주세요"})
             }
@@ -46,7 +46,9 @@ router.post("/autologin",async(req,res)=>{
     const data =jwt.verify(token,process.env.JWT_SECRET_KEY);
     const exp = Number(`${data.exp}000`)
     if(new Date(exp) > new Date()){
-        return res.status(200).json({result : true, data : {email : data.email, name : data.name, id : data.id}})
+        const user = await account.findOne({email : data.email})
+        // console.log(user);
+        return res.status(200).json({result : true, data : {email : data.email, name : data.name, id : data.id, avatar : user.avatar}})
     }else{
         return res.status(200).json({result : false, error : "만료된 토큰입니다."})
     }
@@ -62,9 +64,19 @@ router.post("/register",async(req,res)=>{
         }else{
             // password hash처리
             const hashedPW = bcrypt.hashSync(req.body.pw,12);
-            const rst = await account.create({...req.body, pw : hashedPW})
+            const rst = await account.create({...req.body, pw : hashedPW, avatar : "#FF6542"})
             return res.status(201).json({result : true, data : rst})
         }
+    }catch(e){
+        return res.status(500).json({result : false, error : e.message})
+    }
+})
+
+//정보 변경
+router.post("/update", async(req,res)=>{
+    try{
+        const user = await account.updateOne({email : req.body.email},{avatar : req.body.avatar})
+        return res.status(201).json({result : true, data : {email : user.email, name : user.name, id : user.id, avatar : user.avatar}})
     }catch(e){
         return res.status(500).json({result : false, error : e.message})
     }

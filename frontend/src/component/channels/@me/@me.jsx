@@ -3,17 +3,17 @@ import { createContext, useState } from "react";
 import { useContext } from "react";
 import { useEffect, useRef } from "react";
 import { CustomColor } from "../../../customs/colors";
-import { isMobileContext } from "../../../pages/channels";
+import { FriendsContext, isMobileContext } from "../../../pages/channels";
 import SideBar from "../sidebar";
-import MainMe from "./main";
 import Subbar from "../subbar";
 import SubbarMe from "./subbarme";
+import Main from "../main";
+import MainMe from "./mainme";
 
-export const FriendsContext = createContext(null);
 
 function ChannelsMe() {
     const mobileCtx = useContext(isMobileContext);
-    const [friends, setFriends] = useState({friends:[],send:[],receive:[],close:[]});    
+    const FriendsCtx = useContext(FriendsContext);
     const [showSub, setShowSub] = useState(true);
     
     useEffect(()=>{
@@ -33,9 +33,8 @@ function ChannelsMe() {
             })
         })
         const rst = await rcv.json();
-        // console.log(rst)
         if(rst.result){ 
-            setFriends(rst.datas);
+            FriendsCtx.setFriends({...FriendsCtx.friends, receive : [...FriendsCtx.friends.receive,...rst.datas.receive]})
         }else{
             console.log("/channels/@me server err : ", rst.error);
         }
@@ -43,8 +42,7 @@ function ChannelsMe() {
     // console.log(friends)
 
     return (
-        <FriendsContext.Provider value={{friends,setFriends}}>
-        <Box sx={{width: "100vw" , height : "100vh", backgroundColor : CustomColor.gray, position : "absolute", display : "flex", flexDirection : "row"}}>
+        <Box sx={{width: "100vw" , height : "100vh", backgroundColor : CustomColor.gray, position : "absolute", display : "flex", flexDirection : "row", overflow: 'hidden',}}>
             <SideBar setShowSub={setShowSub} showSub={showSub}/>
             {
                 showSub &&
@@ -52,14 +50,10 @@ function ChannelsMe() {
                     <SubbarMe/>
                 </Subbar>
             }
-            {
-                (mobileCtx.isMobile & !showSub) | (!mobileCtx.isMobile)  ?
+            <Main showSub={showSub}>
                 <MainMe/>
-                :
-                <></>
-            }
+            </Main>
         </Box>
-        </FriendsContext.Provider>
     );
 }
 

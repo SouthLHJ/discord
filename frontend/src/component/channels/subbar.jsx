@@ -5,15 +5,27 @@ import {AiFillSetting} from "react-icons/ai"
 import {BsFillMicFill,BsFillMicMuteFill}from "react-icons/bs"
 import {MdHeadset,MdHeadsetOff} from "react-icons/md"
 import { CustomColor } from "../../customs/colors";
-import { useContext } from "react";
+import { useContext, useState } from "react";
 import { isMobileContext } from "../../pages/channels";
 import { UserContext } from "../..";
 import { useNavigate } from "react-router-dom";
+import { useEffect } from "react";
+import { AuthUpdateAPI } from "../../customs/api/auth";
 
 function Subbar({children}) {
     const mobileCtx = useContext(isMobileContext);
     const userCtx = useContext(UserContext);
     
+    const [profile, setProfile] = useState(false);
+    const [color, setColor] = useState("#fff");
+    
+    useEffect(()=>{
+        if(userCtx.user){
+            setColor(userCtx.user.avatar)
+            // console.log(userCtx.user.avatar)
+        }
+    },[userCtx.user])
+
     //func
     const navigate = useNavigate();
     const onLogout = ()=>{
@@ -22,21 +34,32 @@ function Subbar({children}) {
         navigate("/auth/login");
     }
 
+    const onColorChange = (color)=>{
+        setColor(color);
+    }
+
+    const onUpdate = async()=>{
+        const rst = await AuthUpdateAPI({email : userCtx.user.email,avatar : color})
+        // console.log(rst);
+        // userCtx.setUser(rst.data)
+    }
+
+
     if(!userCtx.user){
         return <p>???????</p>
     }
-
-    
-
+ 
     return (
         <>
             <Box className={styles.box}
                 style={{animation : mobileCtx.isMobile ? "slidein 0.8s" : "none"}}
             >   
                 {children}
-                <Box className={styles.user_box} style={{top : `calc(${window.innerHeight}px - 70px)`}}>
+                <Box className={styles.user_box} style={{top : `calc(${window.innerHeight}px - 60px)`}}>
                     <Box sx={{display : "flex", alignItems : "center"}}>
-                        <Box sx={{backgroundColor : CustomColor.error, borderRadius : "70%", width : "35px", height :"35px", display : "flex", alignItems : "center", justifyContent :"center"}}>
+                        <Box sx={{backgroundColor : CustomColor.error, borderRadius : "70%", width : "35px", height :"35px", display : "flex", alignItems : "center", justifyContent :"center"}}
+                            onClick={()=>setProfile(c=>!c)}
+                        >
                             <FaDiscord style={{fontSize : "30px", color : "white"}}/>
                         </Box>
                         <Box sx={{ml : "12px", height:"100%", display : "flex", flexDirection :"column", alignItems : "center", justifyContent :"center"}}>
@@ -57,6 +80,26 @@ function Subbar({children}) {
                     </Box>
                 </Box>
             </Box>
+            {
+                profile &&
+                <Box className={styles.profile_box} sx={{top : `calc(${window.innerHeight}px - 340px)`}} >
+                    <Box sx={{display : "flex", alignItems : "center", justifyContent : "center"}}>
+                        <span style={{fontSize:"20px", fontWeight : "bold",color :"white"}}>프로필 변경</span>
+                    </Box>
+                    <Box >
+                        <input title="Color Picker" type={"color"} value={color} onChange={(e)=>{onColorChange(e.target.value)}}/>
+                        <span style={{color : "white"}}>{color}</span>
+                    </Box>
+                    <Box sx={{width:"calc(100% - 24px)",bottom: 10,position: "absolute", display : "flex", flexDirection : "row", justifyContent:"flex-end", cursor  : "pointer"}}>
+                        <Box onClick={()=>onUpdate()} >
+                            <span style={{color:"white"}}>완료</span>
+                        </Box>
+                        <Box sx={{ml : "12px"}} onClick={()=>setProfile(false)}>
+                            <span  style={{color:"red"}}>취소</span>
+                        </Box>
+                    </Box>
+                </Box>
+            }
         </>
       );
 }

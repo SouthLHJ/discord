@@ -41,7 +41,7 @@ function AppProvider({children}) {
     <UserContext.Provider value={{user, setUser}}>
       {children}
     </UserContext.Provider>
-    );
+  );
 }
 
 const root = ReactDOM.createRoot(document.getElementById('root'));

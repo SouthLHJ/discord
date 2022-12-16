@@ -5,6 +5,8 @@ const accountSchema = new mongoose.Schema({
     pw : {type : String, required : true},
     name : {type : String, required : true},
     birth : String,
+    avatar : String,
+    socketId : String,
     createdAt : {type:Date,default: Date.now}
 });
  

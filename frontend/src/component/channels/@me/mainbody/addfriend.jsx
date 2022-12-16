@@ -9,9 +9,9 @@ function AddFriends() {
     const mobileCtx = useContext(isMobileContext);
 
     const [load, setLoad] = useState(false);
-    const [username, setUsername]= useState();
+    const [username, setUsername]= useState(undefined);
     const [err, setErr] = useState(null);
-
+    const [success, setSuccess] = useState(null);
     //func
     const onAddFriend = async()=>{
         if(!username)return;
@@ -29,10 +29,14 @@ function AddFriends() {
             })
         })
         const rst = await rcv.json();
-        console.log(rst)
+        // console.log(rst)
         if(rst.result){
+            setUsername(undefined);
+            setSuccess(true);
+            setErr(false);
             setLoad(false);
         }else{
+            setSuccess(false);
             setErr(true);
             setLoad(false);
         }
@@ -62,8 +66,10 @@ function AddFriends() {
                         pb : "12px",
                     }}
                     helperText = {
-                        err &&
-                        <p style={{color : CustomColor.error}}>다시 한번 확인해보세요. 잘못된 유저인 것 같네요.</p>
+                        (err &&
+                        <p style={{color : CustomColor.error}}>다시 한번 확인해보세요. 잘못된 유저인 것 같네요.</p>)
+                        (success &&
+                        <p style={{color : "green"}}>성공적으로 친구 요청이 보내졌어요.</p>)
                     }
                     placeholder={"사용자명#0000 입력"}
                     value={username}

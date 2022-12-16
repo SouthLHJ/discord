@@ -1,0 +1,17 @@
+.box {
+    width: calc(100% - 356px );
+    height: 100vh;
+    display:  flex;
+    flex-direction: column;
+    align-items: center;
+    position: relative;
+    left: 0;
+}
+
+@media screen and (max-width : 510px) {
+    .box {
+        width : calc(100% - 62px );
+        left: 0;
+    }
+
+}

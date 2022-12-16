@@ -39,9 +39,10 @@ const Login = ()=>{
         const rst = await rcv.json();
         if(rst.result){
             //context에 저장
+            // console.log(rst.data);
             userCtx.setUser(rst.data);
             //localstorage에 저장
-            localStorage.setItem("token",JSON.stringify(rst.data));
+            localStorage.setItem("token",JSON.stringify(rst.token));
             
             ref.current.style.setProperty("animation", "fadeout 0.5s")
             const time = setTimeout(()=>{
@@ -94,6 +95,8 @@ const Login = ()=>{
                             onChange={(e)=>{
                                 if(e.target.value){
                                     setEmail(e.target.value)
+                                }else{
+                                    setEmail("")
                                 }
                             }}
                         />
@@ -106,6 +109,8 @@ const Login = ()=>{
                             onChange={(e)=>{
                                 if(e.target.value){
                                     setPW(e.target.value)
+                                }else{
+                                    setEmail("")
                                 }
                             }}
                         />
