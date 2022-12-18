@@ -5,4 +5,6 @@ export const CustomColor = {
     darkgray : "#292828",
     deepgray : "#1C1C1D",
     error : "#FF6542",
+
+    badge : "#d32f2f",
 }

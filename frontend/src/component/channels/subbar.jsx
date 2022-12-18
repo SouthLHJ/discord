@@ -41,7 +41,10 @@ function Subbar({children}) {
     const onUpdate = async()=>{
         const rst = await AuthUpdateAPI({email : userCtx.user.email,avatar : color})
         // console.log(rst);
-        // userCtx.setUser(rst.data)
+        if(rst.status == 201){
+            userCtx.setUser(rst.data.data)
+            setProfile(false);
+        }
     }
 
 
@@ -57,7 +60,7 @@ function Subbar({children}) {
                 {children}
                 <Box className={styles.user_box} style={{top : `calc(${window.innerHeight}px - 60px)`}}>
                     <Box sx={{display : "flex", alignItems : "center"}}>
-                        <Box sx={{backgroundColor : CustomColor.error, borderRadius : "70%", width : "35px", height :"35px", display : "flex", alignItems : "center", justifyContent :"center"}}
+                        <Box sx={{backgroundColor : userCtx.user.avatar, borderRadius : "70%", width : "40px", height :"40px", display : "flex", alignItems : "center", justifyContent :"center"}}
                             onClick={()=>setProfile(c=>!c)}
                         >
                             <FaDiscord style={{fontSize : "30px", color : "white"}}/>

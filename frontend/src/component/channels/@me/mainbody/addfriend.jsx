@@ -1,17 +1,18 @@
 import { Box, CircularProgress } from "@mui/material";
 import { useContext, useState } from "react";
 import { CustomColor } from "../../../../customs/colors";
-import { isMobileContext } from "../../../../pages/channels";
+import { FriendsContext, isMobileContext } from "../../../../pages/channels";
 import styles  from "./addfriends.module.css"
 import { InputField } from "./inputfield";
 
 function AddFriends() {
     const mobileCtx = useContext(isMobileContext);
+    const FriendsCtx = useContext(FriendsContext);
 
     const [load, setLoad] = useState(false);
-    const [username, setUsername]= useState(undefined);
-    const [err, setErr] = useState(null);
-    const [success, setSuccess] = useState(null);
+    const [username, setUsername]= useState("");
+    const [err, setErr] = useState(false);
+    const [success, setSuccess] = useState(false);
     //func
     const onAddFriend = async()=>{
         if(!username)return;
@@ -31,6 +32,7 @@ function AddFriends() {
         const rst = await rcv.json();
         // console.log(rst)
         if(rst.result){
+            FriendsCtx.setFriends({...FriendsCtx.friends, send : [...FriendsCtx.friends.send, rst.data]})
             setUsername(undefined);
             setSuccess(true);
             setErr(false);
@@ -66,10 +68,12 @@ function AddFriends() {
                         pb : "12px",
                     }}
                     helperText = {
-                        (err &&
-                        <p style={{color : CustomColor.error}}>다시 한번 확인해보세요. 잘못된 유저인 것 같네요.</p>)
-                        (success &&
-                        <p style={{color : "green"}}>성공적으로 친구 요청이 보내졌어요.</p>)
+                        <>
+                            {err &&
+                            <p style={{color : CustomColor.error}}>다시 한번 확인해보세요. 잘못된 유저인 것 같네요.</p>}
+                            {success &&
+                            <p style={{color : "green"}}>성공적으로 친구 요청이 보내졌어요.</p>}
+                        </>
                     }
                     placeholder={"사용자명#0000 입력"}
                     value={username}

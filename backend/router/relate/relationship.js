@@ -9,7 +9,7 @@ dotenv.config();
 const router = express.Router();
 
 let user;
-router.use((req,res,next)=>{
+router.use(async(req,res,next)=>{
     const token = req.body.token;
     const data =jwt.verify(token,process.env.JWT_SECRET_KEY);
     user = data;
@@ -29,7 +29,8 @@ router.post("/send",async(req,res)=>{
     if(data && dataId.startsWith(id)){
         // 이미 보낸 요청인지 확인하기
         const datas = await relationship.find({$or : [{user1:user.email,user2:data.email},{user1: data.email,user2 :user.email}]})
-        if(datas){
+        // console.log(datas);
+        if(datas.length !== 0){
             return res.status(201).json({result : false, error : "이미 존재하는 요청입니다."})
         }else{
             const relate = {
@@ -44,11 +45,15 @@ router.post("/send",async(req,res)=>{
             if(data.socketId){
                 //웹소켓 서버 불러오고
                 const io = req.app.get("io");
-                io.to(data.socketId).emit("add-friends",data)
+                // console.log(data.socketId,data)
+                const sendUser = await account.findOne({email : user.email})
+                io.to(data.socketId).emit("add-friends",sendUser)
             }
 
             const rst = await relationship.create(relate)
-            return res.status(201).json({result : true, data : rst})
+            if(rst){
+                return res.status(201).json({result : true, data : data})
+            }
 
         }
 
@@ -67,6 +72,9 @@ router.post("/send",async(req,res)=>{
 // 친구 목록 보내주기
 router.post("/list",async(req,res)=>{
     const email = user.email;
+    // 웹소켓 불러오고
+    const io = req.app.get("io");
+    // console.log("목록 보내느 중", req.body.socketId)
     // user1 이나 user2에서 찾을 수 있게.
     try{
         const datas = await relationship.find({$or : [{user1:email},{user2 :email}]})
@@ -89,13 +97,24 @@ router.post("/list",async(req,res)=>{
                         send.push(oppe);
                         break;
                     case 2 : 
-                        friends.push(datas[i]);
+                        oppe = await account.findOne({email : datas[i].user1 })
+                        friends.push(oppe);
+                        // 친구들 리스트에서 로그인 한 애들한테 신호 줘야함..!! 온라인이라고..
+                        // 친구들 소켓 값 있는지 확인해서 소켓 통신 하기
+                        if(oppe.socketId){
+                            const newUser = await account.findOne({email : user.email});
+                            newUser.socketId = req.body.socketId;
+                            // console.log("",newUser)
+                            io.to(oppe.socketId).emit("login-friends",newUser)
+                        }
                         break;
                     case 3 : 
-                        close.push(datas[i]);
+                        oppe = await account.findOne({email : datas[i].user1 })
+                        close.push(oppe);
                         break;
 
                 }
+                
             }else{
                 switch(datas[i].type){
                     case 0 : 
@@ -107,20 +126,102 @@ router.post("/list",async(req,res)=>{
                         receive.push(oppe);
                         break;
                     case 2 : 
-                        friends.push(datas[i]);
+                        oppe = await account.findOne({email : datas[i].user2 })
+                        friends.push(oppe);
+                        // 친구들 리스트에서 로그인 한 애들한테 신호 줘야함..!! 온라인이라고..
+                        // 친구들 소켓 값 있는지 확인해서 소켓 통신 하기
+                        const newUser = await account.findOne({email : user.email});
+                        newUser.socketId = req.body.socketId;
+                        // console.log("",newUser)
+                        if(oppe.socketId){
+                            io.to(oppe.socketId).emit("login-friends",newUser)
+                        }
                         break;
                     case 3 : 
-                        close.push(datas[i]);
+                        oppe = await account.findOne({email : datas[i].user2 })
+                        close.push(oppe);
                         break;
 
                 }
             }
         }
+       
+
         return res.status(200).json({result : true, datas : {friends,send,receive,close}})
     }catch(e){
         return res.status(200).json({result : false, error : e.message})
     }
 
 })
+
+// 친구요청 수락
+router.post("/apply",async(req,res)=>{
+    try{
+        const user2 = req.body.user2;
+        const rst = await relationship.findOneAndUpdate({user2 : user.email, user1 : user2},{type : 2},{returnDocument : "after"})
+        
+        // 요청을 받은 사람의 소켓 아이디를 찾는다.
+        const user2Data = await account.findOne({email: user2})
+        // 있으면, 온라인 상태.
+        if(user2Data.socketId){
+            //웹소켓 서버 불러오고
+            const io = req.app.get("io");
+            // console.log(data.socketId,data)
+            const sendUser = await account.findOne({email : user.email})
+            io.to(user2Data.socketId).emit("apply-friends",sendUser)
+        }
+        return res.status(200).json({result : true, datas : rst})
+        
+    }catch(e){
+        return res.status(200).json({result : false, error : e.message})
+    }
+})
+
+// 친구요청 취소
+router.post("/cancel",async(req,res)=>{
+    try{
+        const user2 = req.body.user2;
+        const rst = await relationship.findOneAndDelete({user1 : user.email, user2 : user2})
+        // 요청을 받은 사람의 소켓 아이디를 찾는다.
+        const user2Data = await account.findOne({email: user2})
+        // console.log(user2,user2Data)
+        // 있으면, 온라인 상태.
+        if(user2Data.socketId){
+            //웹소켓 서버 불러오고
+            const io = req.app.get("io");
+            const sendUser = await account.findOne({email : user.email})
+            console.log(user2Data.socketId,sendUser)
+
+            io.to(user2Data.socketId).emit("cancel-friends",sendUser)
+        }
+        return res.status(200).json({result : true})
+    }catch(e){
+        return res.status(200).json({result : false, error : e.message})
+    }
+})
+
+// 친구요청 거절
+router.post("/deny",async(req,res)=>{
+    try{
+        const user2 = req.body.user2;
+        const rst = await relationship.findOneAndDelete({user2 : user.email, user1 : user2})
+        // console.log(rst)
+        // 요청을 받은 사람의 소켓 아이디를 찾는다.
+        const user2Data = await account.findOne({email: user2})
+        // 있으면, 온라인 상태.
+        if(user2Data.socketId){
+            //웹소켓 서버 불러오고
+            const io = req.app.get("io");
+            // console.log(data.socketId,data)
+            const sendUser = await account.findOne({email : user.email})
+            io.to(user2Data.socketId).emit("deny-friends",sendUser)
+        }
+
+        return res.status(200).json({result : true})
+    }catch(e){
+        return res.status(200).json({result : false, error : e.message})
+    }
+})
+
 
 export default router;

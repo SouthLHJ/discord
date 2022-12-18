@@ -93,11 +93,7 @@ const Login = ()=>{
                             sx={{width:"100%"}}
                             value={email}
                             onChange={(e)=>{
-                                if(e.target.value){
-                                    setEmail(e.target.value)
-                                }else{
-                                    setEmail("")
-                                }
+                                setEmail(e.target.value)
                             }}
                         />
                     </Box>
@@ -107,11 +103,7 @@ const Login = ()=>{
                             sx={{width:"100%"}}
                             value={pw}
                             onChange={(e)=>{
-                                if(e.target.value){
-                                    setPW(e.target.value)
-                                }else{
-                                    setEmail("")
-                                }
+                                setPW(e.target.value)
                             }}
                         />
                     </Box>

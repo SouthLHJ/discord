@@ -30,7 +30,6 @@ function MainMe() {
             break;
     }
 
-    console.log(FriendsCtx.friends.receive.length !== 0 || FriendsCtx.friends.send.length !== 0)
 
     return (
         <>
@@ -52,11 +51,12 @@ function MainMe() {
 
                 {
                     FriendsCtx.friends.receive.length !== 0 || FriendsCtx.friends.send.length !== 0 ?
-                    <Badge color="error" overlap="circular" badgeContent=" ">
-                        <Box className={[styles.list_box, menu === 2 && styles.select_box]} onClick={()=>setMenu(2)}>
-                            <p className={styles.list_text}>대기중</p>
-                        </Box>    
-                    </Badge>
+                    <Box className={[styles.list_box, menu === 2 && styles.select_box]} onClick={()=>setMenu(2)}>
+                        <span className={styles.list_text}>대기중</span>
+                        <Box sx={{width : "20px", height :"20px", borderRadius : "70%", backgroundColor : CustomColor.badge, display : "flex", alignItems : "center", justifyContent : "center", ml : "4px"}}>
+                            <span style={{color :"white", fontSize : "15px"}}>{FriendsCtx.friends.receive.length + FriendsCtx.friends.send.length}</span>
+                        </Box>
+                    </Box>    
                     :
                     <Box className={[styles.list_box, menu === 2 && styles.select_box]} onClick={()=>setMenu(2)}>
                         <p className={styles.list_text}>대기중</p>

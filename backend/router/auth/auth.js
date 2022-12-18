@@ -3,6 +3,7 @@ import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken"
 import dotenv from "dotenv";
 import account from "../../lib/account.js";
+import relationship from "../../lib/relationship.js";
 // .env 사용하기
 dotenv.config();
 
@@ -20,10 +21,9 @@ router.post("/login",async(req,res)=>{
             const savepw = req.body.pw;
             const chk = bcrypt.compareSync(savepw,user.pw)
             // console.log(user._id.toString())
-
             // 일치하면
             if(chk){
-                const token = jwt.sign({email : user.email, name : user.name, id : user._id.toString().slice(0,4)},process.env.JWT_SECRET_KEY,{expiresIn : "2 days"})   
+                const token = jwt.sign({email : user.email, name : user.name, id : user._id.toString().slice(0,4)},process.env.JWT_SECRET_KEY,{expiresIn : "2 days"})  
                 return res.status(200).json({result : true, token : token, data : {email : user.email, name : user.name, id : user._id.toString().slice(0,4),avatar: user.avatar}})
             }else{
                 return res.status(200).json({result : false, error : "비밀번호를 확인해주세요"})
@@ -41,16 +41,22 @@ router.post("/login",async(req,res)=>{
 
 //토큰 체크
 router.post("/autologin",async(req,res)=>{
-    const token = req.body.token;
-    // console.log(token)
-    const data =jwt.verify(token,process.env.JWT_SECRET_KEY);
-    const exp = Number(`${data.exp}000`)
-    if(new Date(exp) > new Date()){
-        const user = await account.findOne({email : data.email})
-        // console.log(user);
-        return res.status(200).json({result : true, data : {email : data.email, name : data.name, id : data.id, avatar : user.avatar}})
+    if(req.body.token){
+
+        
+        const token = req.body.token;
+        // console.log(token)
+        const data =jwt.verify(token,process.env.JWT_SECRET_KEY);
+        const exp = Number(`${data.exp}000`)
+        if(new Date(exp) > new Date()){
+            const user = await account.findOne({email : data.email})
+            // console.log(user);
+            return res.status(200).json({result : true, data : {email : data.email, name : data.name, id : data.id, avatar : user.avatar}})
+        }else{
+            return res.status(200).json({result : false, error : "만료된 토큰입니다."})
+        }
     }else{
-        return res.status(200).json({result : false, error : "만료된 토큰입니다."})
+        return res.status(500).json({result : false, error : "잘못된 정보입니다."})
     }
 })
 
@@ -75,8 +81,9 @@ router.post("/register",async(req,res)=>{
 //정보 변경
 router.post("/update", async(req,res)=>{
     try{
-        const user = await account.updateOne({email : req.body.email},{avatar : req.body.avatar})
-        return res.status(201).json({result : true, data : {email : user.email, name : user.name, id : user.id, avatar : user.avatar}})
+        const user = await account.findOneAndUpdate({email : req.body.email},{avatar : req.body.avatar},{returnDocument :"after"})
+        console.log(user)
+        return res.status(201).json({result : true, data : {email : user.email, name : user.name, id : user._id.toString().slice(0,4), avatar : user.avatar}})
     }catch(e){
         return res.status(500).json({result : false, error : e.message})
     }

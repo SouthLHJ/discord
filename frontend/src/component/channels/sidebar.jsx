@@ -1,4 +1,6 @@
-import { Badge, Box, Divider, Typography } from "@mui/material";
+import { Box, Divider,Typography } from "@mui/material";
+import Badge, { BadgeProps } from '@mui/material/Badge';
+import { styled } from '@mui/material/styles';
 import styles from "./sidebar.module.css"
 import {FaDiscord} from "react-icons/fa"
 import { CustomColor } from "../../customs/colors";
@@ -20,10 +22,10 @@ function SideBar({showSub,setShowSub}) {
                 }}
             >
                 {
-                    FriendsCtx.friends ?
-                    <Badge color="error" badgeContent={FriendsCtx.friends.receive.length}>
+                    FriendsCtx.friends.receive ?
+                    <StyledBadge color="error" badgeContent={FriendsCtx.friends.receive.length}>
                         <FaDiscord style={{fontSize : "35px", color : "white"}}/>    
-                    </Badge>
+                    </StyledBadge>
                     :
                     <FaDiscord style={{fontSize : "35px", color : "white"}}/>
                 }
@@ -34,3 +36,13 @@ function SideBar({showSub,setShowSub}) {
 }
 
 export default SideBar;
+
+
+const StyledBadge = styled(Badge)(({ theme }) => ({
+    '& .MuiBadge-badge': {
+      right: 0,
+      top: 5,
+      border: `0px solid ${theme.palette.background.paper}`,
+      padding: '0 4px',
+    },
+  }));

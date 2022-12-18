@@ -36,13 +36,9 @@ const io = new Server(httpServer, {cors : {
     origin : process.env.CLIENT_URL//프론트 서버 주소 작성
 }});
 io.on("connection", async(socket) => {
-    console.log("클라측으로부터 연결 발생", socket.id);
-    
-    console.log(socket.handshake.query);
-    //
+    // console.log("클라측으로부터 연결 발생",socket.handshake.query, socket.id);
     const clientData = socket.handshake.query;
-    const rcv = await account.updateOne({email : clientData.email },{socketId : socket.id})
-
+    const rcv = await account.findOneAndUpdate({email : clientData.email },{socketId : socket.id},{returnDocument : "after"})
     socket.on("disconnect",async()=>{
         await account.updateOne({email: clientData.email},{socketId : null})
     })
