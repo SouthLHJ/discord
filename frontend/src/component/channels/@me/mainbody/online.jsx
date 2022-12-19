@@ -1,4 +1,5 @@
-import { Badge, Box, IconButton, Tooltip } from "@mui/material";
+import { Box, IconButton, Tooltip } from "@mui/material";
+import Badge, { BadgeProps } from '@mui/material/Badge';
 import { styled } from '@mui/material/styles';
 import { useState } from "react";
 import styles from "./all.module.css"
@@ -9,6 +10,9 @@ import {BsThreeDotsVertical} from "react-icons/bs"
 import {FaDiscord, FaUserFriends} from "react-icons/fa"
 import { useContext } from "react";
 import { FriendsContext, isMobileContext } from "../../../../pages/channels";
+import { CustomColor } from "../../../../customs/colors";
+import CustomBadge from "../../../../customs/badge";
+import { IsDirectAPI } from "../../../../customs/api/channel";
 
 function OnlineMe() {
     const mobileCtx = useContext(isMobileContext);
@@ -21,24 +25,27 @@ function OnlineMe() {
         </Box>
     )
 
+    const onMessage = async(user2Email)=>{
+        const token = localStorage.getItem("token")
+        const rst = await IsDirectAPI(JSON.parse(token), user2Email);
+        
+        console.log(rst);
+    }
+
     const online = FriendsCtx.friends.friends.map(one=>{
         if(one.socketId){
             return (
                 <Box key={one._id} className={styles.list_box}>
                     <Box sx={{display : "flex", alignItems : "center"}}>
-                        <Box sx={{backgroundColor : one.avatar, borderRadius : "70%", width : "40px", height :"40px", display : "flex", alignItems : "center", justifyContent :"center"}}>
-                                <FaDiscord style={{fontSize : "30px", color : "white"}}/>
-                        </Box>
+                        <CustomBadge backgroundColor={one.avatar} color={"success"} online={true}/>
                         <Box  className={styles.user_box}>
                             <span className={styles.user_name}>{one.name}</span>            
-                            {/* <StyledBadge color="error"> */}
-                            <span className={styles.user_type}>온라인</span>
-                            {/* </StyledBadge> */}
+                                <span className={styles.user_type}>온라인</span>
                         </Box>
                     </Box>
                     <Box >
                         <Tooltip title="메세지 보내기" placement="top" arrow>
-                            <IconButton onClick={()=>{}}>
+                            <IconButton onClick={()=>onMessage(one.email)}>
                                 <AiFillMessage style={{color : "gray", fontSize :"30px",cursor : "pointer"}}/>
                             </IconButton>
                         </Tooltip>
@@ -49,6 +56,7 @@ function OnlineMe() {
                         </Tooltip>
                     </Box>
                 </Box>
+                
             )
         }
     })
@@ -81,9 +89,10 @@ export default OnlineMe;
 
 const StyledBadge = styled(Badge)(({ theme }) => ({
     '& .MuiBadge-badge': {
-      right: 0,
-      top: 0,
-      border: `0px solid ${theme.palette.background.paper}`,
-      padding: '0 4px',
+      right: "5px",
+      top: "35px",
+      border: `3px solid ${CustomColor.deepgray}`,
+      borderRadius : "70%",
+      padding: '6px',
     },
   }));

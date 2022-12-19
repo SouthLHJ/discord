@@ -22,32 +22,8 @@ function ChannelsMe() {
         if(mobileCtx.isMobile){
             setShowSub(false)
         }
-        if(userCtx.user?.socketId){
-            init();
-        }
     },[userCtx.user])
-    
-    async function init (){
-        const token = localStorage.getItem("token")
-        // console.log(userCtx.user)
-        const rcv = await fetch(process.env.REACT_APP_SERVER_URI+"/relation/list",{
-            method : "post",
-            headers : {"content-type": "application/json"},
-            body : JSON.stringify({
-                token : JSON.parse(token),
-                socketId : userCtx.user.socketId
-            })
-        })
-        const rst = await rcv.json();
-        // console.log(rst.datas)
-        if(rst.result){ 
-            // FriendsCtx.setFriends({...FriendsCtx.friends, receive : [...FriendsCtx.friends.receive,...rst.datas.receive]})
-            FriendsCtx.setFriends({...rst.datas})
-        }else{
-            console.log("/channels/@me server err : ", rst.error);
-        }
-    }
-    // console.log(FriendsCtx.friends)
+
 
     return (
         <Box sx={{width: "100vw" , height : "100vh", backgroundColor : CustomColor.gray, position : "absolute", display : "flex", flexDirection : "row", overflow: 'hidden',}}>

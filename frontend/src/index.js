@@ -13,7 +13,7 @@ function AppProvider({children}) {
   useEffect(()=>{
     const token = localStorage.getItem("token")
     
-    if(token){
+    if(JSON.parse(token)){
       init();
     }
     async function init (){

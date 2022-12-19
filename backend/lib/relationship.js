@@ -6,12 +6,15 @@ const relationshipSchema = new mongoose.Schema({
     type : Number,
     user1 : String,
     user2 : String,
+    channel : String,
     createdAt : Date,
 });
 
 /** type(user1기준) : { 0 : 보낸, 1 : 받은, 2 : 친구, 3 : 차단}
  * 
  *  user1Data / user2Data : populate
+ * 
+ *  chatLog  : populate
  */
 export default mongoose.model("relationship",relationshipSchema)
 
@@ -25,4 +28,10 @@ relationshipSchema.virtual("user1Data",{
     localField : "user1",
     foreignField : "email",
     ref : "account"
+})
+
+relationshipSchema.virtual("chatLog",{
+    localField : "channel",
+    foreignField : "_id",
+    ref : "channel"
 })

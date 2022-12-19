@@ -17,6 +17,13 @@ function SubbarMe() {
                 <p className={styles.icon_text}>친구</p>
             </Box>
 
+            <Box>
+                <Box>
+                    <p style={{color : "gray"}}>다이렉트 메세지</p>
+                </Box>
+
+            </Box>
+
         </Box>
       );
 }

@@ -7,6 +7,7 @@ const __dirname = path.resolve();
 
 import AuthRouter from "./router/auth/auth.js"
 import RelateRouter from "./router/relate/relationship.js"
+import ChannelsRouter from "./router/channels/channels.js"
 
 //Socket io
 import { createServer } from "http";
@@ -25,6 +26,7 @@ app.use("/static",express.static(path.join(__dirname,"static")))
 // 경로 설정
 app.use("/auth",AuthRouter)
 app.use("/relation",RelateRouter)
+app.use("/channels",ChannelsRouter)
 
 //Socket io를 사용하기위한 서버 오픈
 const httpServer = createServer(app);
@@ -37,6 +39,9 @@ const io = new Server(httpServer, {cors : {
 }});
 io.on("connection", async(socket) => {
     // console.log("클라측으로부터 연결 발생",socket.handshake.query, socket.id);
+    // socket.join("tttt")
+    console.log("rooms",socket.id,socket.rooms);
+
     const clientData = socket.handshake.query;
     const rcv = await account.findOneAndUpdate({email : clientData.email },{socketId : socket.id},{returnDocument : "after"})
     socket.on("disconnect",async()=>{

@@ -9,6 +9,7 @@ import {FaDiscord, FaUserFriends} from "react-icons/fa"
 
 import { useContext } from "react";
 import { FriendsContext, isMobileContext } from "../../../../pages/channels";
+import CustomBadge from '../../../../customs/badge';
 
 function AllFriendsMe() {
     const mobileCtx = useContext(isMobileContext);
@@ -26,12 +27,10 @@ function AllFriendsMe() {
         return (
             <Box key={one._id} className={styles.list_box}>
                 <Box sx={{display : "flex", alignItems : "center"}}>
-                    <Box sx={{backgroundColor : one.avatar, borderRadius : "70%", width : "40px", height :"40px", display : "flex", alignItems : "center", justifyContent :"center"}}>
-                        <FaDiscord style={{fontSize : "30px", color : "white"}}/>
-                    </Box>
+                    <CustomBadge backgroundColor={one.avatar}color={"success"} online={one.socketId ? true : false}  />
                     <Box  className={styles.user_box}>
                         <span className={styles.user_name}>{one.name}</span>            
-                        <span className={styles.user_type}>오프라인/온라인</span>
+                        <span className={styles.user_type}>{one.socketId ? "온라인" : "오프라인"}</span>
                     </Box>
                 </Box>
                 <Box >

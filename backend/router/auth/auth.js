@@ -46,13 +46,18 @@ router.post("/autologin",async(req,res)=>{
         
         const token = req.body.token;
         // console.log(token)
-        const data =jwt.verify(token,process.env.JWT_SECRET_KEY);
-        const exp = Number(`${data.exp}000`)
-        if(new Date(exp) > new Date()){
-            const user = await account.findOne({email : data.email})
-            // console.log(user);
-            return res.status(200).json({result : true, data : {email : data.email, name : data.name, id : data.id, avatar : user.avatar}})
-        }else{
+        try{
+            const data =jwt.verify(token,process.env.JWT_SECRET_KEY);
+            const exp = Number(`${data.exp}000`)
+            if(new Date(exp) > new Date()){
+                const user = await account.findOne({email : data.email})
+                // console.log(user);
+                return res.status(200).json({result : true, data : {email : data.email, name : data.name, id : data.id, avatar : user.avatar}})
+            }else{
+                return res.status(200).json({result : false, error : "만료된 토큰입니다."})
+            }
+
+        }catch(e){
             return res.status(200).json({result : false, error : "만료된 토큰입니다."})
         }
     }else{

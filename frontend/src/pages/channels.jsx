@@ -5,6 +5,8 @@ import { UserContext } from "..";
 import ChannelsMe from "../component/channels/@me/@me";
 
 import {io} from "socket.io-client";
+import { useRef } from "react";
+import DirectChannel from "../component/channels/@me/channel/channel";
 
 /** isMobile,setIsMobile */
 export const isMobileContext = createContext(null);
@@ -17,7 +19,7 @@ const Channels = ()=>{
     const [isMobile,setIsMobile] = useState(false);
     const [friends, setFriends] = useState({friends:[],send:[],receive:[],close:[]});    
 
-    console.log(friends)
+    // console.log(friends)
     useEffect(()=>{
         // 로그인 상태인지 아닌지 확인
         if(!userCtx.user){
@@ -31,55 +33,92 @@ const Channels = ()=>{
         }
         // 웹소켓 연결
         const socket = io(process.env.REACT_APP_SERVER_URI,{query : {email : userCtx.user.email}});
-        socket.on("connect",()=>{
+        socket.on("connect",async()=>{
             // console.log("connect", )
+            await init(socket.id);
             userCtx.setUser({...userCtx.user, socketId : socket.id})
         })
         // 친구 추가 알람
-        socket.on("add-friends",(data)=>{
+        socket.on("add-friends",async(data)=>{
             console.log("add-friends",data);
-            setFriends({...friends, receive : [...friends.receive,data]});
+            setFriends(current=>{
+                const newData = {...current, receive : [...current.receive,data]}
+                return newData;
+            });
         })
         // 친구 허락 알람
-        socket.on("apply-friends",(data)=>{
+        socket.on("apply-friends",async(data)=>{
             console.log("apply-friends",data);
-            setFriends({...friends, friends : [...friends.friends,data]});
+            setFriends(current =>{
+                const newData = {...current, friends : [...current.friends,data]};
+                return newData;
+            })
         })
         // 친구 취소 알람
-        socket.on("cancel-friends",(data)=>{
+        socket.on("cancel-friends",async(data)=>{
             console.log("cancel-friends",data);
-            const newReceive = friends.receive.filter(one=>{
-                return one.email !== data.email
+            setFriends(current =>{
+                const newReceive =  current.receive.filter(one=>{
+                    return one.email !== data.email
+                })
+                return {...current, receive : newReceive};
             })
-            setFriends({...friends, receive : newReceive});
         })
         // 친구 거절 알람
-        socket.on("deny-friends",(data)=>{
+        socket.on("deny-friends",async(data)=>{
             console.log("deny-friends",data);
-            setFriends({...friends, friends : [...friends.friends,data]});
+            setFriends(current=>{
+                const newSend =  current.send.filter(one=>{
+                    return one.email !== data.email
+                })
+                return {...current, receive : newSend};
+            })
         })
         // 친구 온라인 알람
-        socket.on("login-friends",(data)=>{
+        socket.on("login-friends",async(data)=>{
             console.log("login-friends",data);
-            let newFriends =[];
-            for(let i=0; i<friends.friends.length; i++){
-                console.log(friends.friends[i])
-                if(friends.friends[i].email == data.email){
-                    console.log("data",data)
-                    newFriends.push(data)
-                }else{
-                    console.log("one",friends.friends[i])
-                    newFriends.push( friends.friends[i])
+            setFriends((current=>{
+                let newFriends =[];
+                for(let i=0; i<current.friends.length; i++){
+                    // console.log(current.friends[i])
+                    if(current.friends[i].email == data.email){
+                        // console.log("data",data)
+                        newFriends.push(data)
+                    }else{
+                        // console.log("one",current.friends[i])
+                        newFriends.push( current.friends[i])
+                    }
                 }
-            }
-            console.log("friends",friends)
-            console.log("newFriends",newFriends)
-            
-            // setFriends({...friends, friends : newFriends})
+                // console.log("friends",current)
+                // console.log("newFriends",newFriends)
+                return {...current, friends : newFriends}
+            }))
         })
 
         return ()=>{socket.disconnect()};
     },[])
+
+
+    async function init (socketId){
+        const token = localStorage.getItem("token")
+        // console.log(userCtx.user)
+        const rcv = await fetch(process.env.REACT_APP_SERVER_URI+"/relation/list",{
+            method : "post",
+            headers : {"content-type": "application/json"},
+            body : JSON.stringify({
+                token : JSON.parse(token),
+                socketId : socketId
+            })
+        })
+        const rst = await rcv.json();
+        // console.log(rst.datas)
+        if(rst.result){ 
+            // FriendsCtx.setFriends({...FriendsCtx.friends, receive : [...FriendsCtx.friends.receive,...rst.datas.receive]})
+            setFriends({...rst.datas})
+        }else{
+            console.log("/channels server err : ", rst.error);
+        }
+    }
 
     return (
         <>
@@ -88,7 +127,7 @@ const Channels = ()=>{
             <FriendsContext.Provider value={{friends, setFriends}}>
                 <Routes>
                     <Route path="@me" element={<ChannelsMe />}/>
-                    {/* <Route path="register" element={<Register />} /> */}
+                    <Route path="@me/:channel" element={<DirectChannel />} />
                 </Routes>
             </FriendsContext.Provider>
             </isMobileContext.Provider>

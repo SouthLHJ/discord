@@ -104,7 +104,7 @@ router.post("/list",async(req,res)=>{
                         if(oppe.socketId){
                             const newUser = await account.findOne({email : user.email});
                             newUser.socketId = req.body.socketId;
-                            // console.log("",newUser)
+                            // console.log("ccc 정보",newUser)
                             io.to(oppe.socketId).emit("login-friends",newUser)
                         }
                         break;
@@ -132,7 +132,7 @@ router.post("/list",async(req,res)=>{
                         // 친구들 소켓 값 있는지 확인해서 소켓 통신 하기
                         const newUser = await account.findOne({email : user.email});
                         newUser.socketId = req.body.socketId;
-                        // console.log("",newUser)
+                        // console.log("ccc 정보",newUser)
                         if(oppe.socketId){
                             io.to(oppe.socketId).emit("login-friends",newUser)
                         }
@@ -190,7 +190,7 @@ router.post("/cancel",async(req,res)=>{
             //웹소켓 서버 불러오고
             const io = req.app.get("io");
             const sendUser = await account.findOne({email : user.email})
-            console.log(user2Data.socketId,sendUser)
+            // console.log(user2Data.socketId,sendUser)
 
             io.to(user2Data.socketId).emit("cancel-friends",sendUser)
         }
@@ -206,7 +206,7 @@ router.post("/deny",async(req,res)=>{
         const user2 = req.body.user2;
         const rst = await relationship.findOneAndDelete({user2 : user.email, user1 : user2})
         // console.log(rst)
-        // 요청을 받은 사람의 소켓 아이디를 찾는다.
+        // 요청을 보낸 사람의 소켓 아이디를 찾는다.
         const user2Data = await account.findOne({email: user2})
         // 있으면, 온라인 상태.
         if(user2Data.socketId){
