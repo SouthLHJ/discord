@@ -20,11 +20,15 @@ router.use(async(req,res,next)=>{
 })
 
 // 새로운 채널 생성
-router.get("/new",async(req,res)=>{
+router.post("/new",async(req,res)=>{
     try{
-        await channel.create({})
+        const data = {
+            joiner : [user.email, req.body.user2],
+            createdAt : Date.now()
+        }
+        const rst = await channel.create(data)
 
-        return res.status(201).json({result : true, datas : datas})
+        return res.status(201).json({result : true, datas : rst})
     }catch(e){
         return res.status(422).json({result : false, error : e.message})
     }

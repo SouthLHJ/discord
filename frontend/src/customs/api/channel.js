@@ -19,3 +19,19 @@ export const IsDirectAPI = async(token,user2)=>{
 
     return await rcv.json();
 }
+
+/** 계정과 친구 새로운 채팅 채널 생성
+ *  
+ *  return {result : , datas : }
+ */
+export const NewChannelAPI = async(token,user2)=>{
+    const rcv = await fetch(serverURL+"/channels/new",{
+        ...postMethod,
+        body : JSON.stringify({
+            token : token,
+            user2 : user2
+        })
+    })
+
+    return await rcv.json();
+}
