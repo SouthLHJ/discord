@@ -8,12 +8,11 @@ const serverURL = process.env.REACT_APP_SERVER_URI;
  *  
  *  return {result : , datas : }
  */
-export const IsDirectAPI = async(token,user2)=>{
+export const IsDirectAPI = async(token)=>{
     const rcv =  await fetch(serverURL+"/channels/isdirect",{
         ...postMethod,
         body : JSON.stringify({
-            token : token,
-            user2 : user2
+            token : token
         })
     })
 

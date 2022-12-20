@@ -1,23 +1,23 @@
-import { useContext } from "react";
+import { useContext, useRef } from "react";
 import { createContext, useEffect, useState } from "react";
 import { Route, Routes, useNavigate  } from "react-router-dom";
 import { UserContext } from "..";
-import ChannelsMe from "../component/channels/@me/@me";
-
+import PathMe from "./channels/@me";
 import {io} from "socket.io-client";
-import { useRef } from "react";
-import DirectChannel from "../component/channels/@me/channel/channel";
 
 /** isMobile,setIsMobile */
 export const isMobileContext = createContext(null);
 /** friends , setFriends */
 export const FriendsContext = createContext(null);
+/** socket */
+export const SocketContext = createContext(null);
 
 const Channels = ()=>{
     const userCtx= useContext(UserContext);
     const navigate = useNavigate();
     const [isMobile,setIsMobile] = useState(false);
     const [friends, setFriends] = useState({friends:[],send:[],receive:[],close:[]});    
+    const socketObject = useRef();
 
     // console.log(friends)
     useEffect(()=>{
@@ -33,6 +33,7 @@ const Channels = ()=>{
         }
         // 웹소켓 연결
         const socket = io(process.env.REACT_APP_SERVER_URI,{query : {email : userCtx.user.email}});
+        socketObject.current = socket;
         socket.on("connect",async()=>{
             // console.log("connect", )
             await init(socket.id);
@@ -123,14 +124,15 @@ const Channels = ()=>{
     return (
         <>
             {/* <Typography>Text</Typography> */}
-            <isMobileContext.Provider value={{isMobile,setIsMobile}}>
-            <FriendsContext.Provider value={{friends, setFriends}}>
-                <Routes>
-                    <Route path="@me" element={<ChannelsMe />}/>
-                    <Route path="@me/:channel" element={<DirectChannel />} />
-                </Routes>
-            </FriendsContext.Provider>
-            </isMobileContext.Provider>
+            <SocketContext.Provider value={{socket : socketObject.current}}>
+                <isMobileContext.Provider value={{isMobile,setIsMobile}}>
+                <FriendsContext.Provider value={{friends, setFriends}}>
+                    <Routes>
+                        <Route path="@me/*" element={<PathMe />}/>
+                    </Routes>
+                </FriendsContext.Provider>
+                </isMobileContext.Provider>
+            </SocketContext.Provider>
         </>
     );
 }

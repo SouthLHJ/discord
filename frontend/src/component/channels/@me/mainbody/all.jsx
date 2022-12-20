@@ -10,16 +10,38 @@ import {FaDiscord, FaUserFriends} from "react-icons/fa"
 import { useContext } from "react";
 import { FriendsContext, isMobileContext } from "../../../../pages/channels";
 import CustomBadge from '../../../../customs/badge';
+import { IsDirectAPI, NewChannelAPI } from '../../../../customs/api/channel';
+import { useNavigate } from 'react-router-dom';
 
 function AllFriendsMe() {
+    const navigate = useNavigate();
     const mobileCtx = useContext(isMobileContext);
     const friendsCtx = useContext(FriendsContext);
 
     const [username , setUsername] =useState();
 
-    useEffect(()=>{
-        
-    },[])
+    const onMessage = async(user2Email)=>{
+        const token = localStorage.getItem("token")
+        // 채널이 있는지 확인하고.
+        const rst = await IsDirectAPI(JSON.parse(token), user2Email);
+        console.log(rst);
+        if(rst.result){
+            // 채널이 있다면 이동. 없다면 생성하고 이동
+            if(rst?.data){
+                navigate(`/channels/@me/${rst.data._id}`)
+            }else{
+                const rst2  = await NewChannelAPI(JSON.parse(token),user2Email);
+                
+                if(rst2.result){
+                    navigate(`/channels/@me/${rst2.datas._id}`)
+                }else{
+                    console.log("/channels/@me newchannel server Err : ", rst.error)
+                }
+            }
+        }else{
+            console.log("/channels/@me isdirect server Err : ", rst.error)
+        }
+    }
 
     // console.log(friendsCtx.friends)
 
@@ -35,7 +57,7 @@ function AllFriendsMe() {
                 </Box>
                 <Box >
                     <Tooltip title="메세지 보내기" placement="top" arrow>
-                        <IconButton onClick={()=>{}}>
+                        <IconButton onClick={()=>onMessage(one.email)}>
                             <AiFillMessage style={{color : "gray", fontSize :"30px",cursor : "pointer"}}/>
                         </IconButton>
                     </Tooltip>

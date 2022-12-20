@@ -40,12 +40,20 @@ const io = new Server(httpServer, {cors : {
 io.on("connection", async(socket) => {
     // console.log("클라측으로부터 연결 발생",socket.handshake.query, socket.id);
     // socket.join("tttt")
-    console.log("rooms",socket.id,socket.rooms);
+   
 
     const clientData = socket.handshake.query;
     const rcv = await account.findOneAndUpdate({email : clientData.email },{socketId : socket.id},{returnDocument : "after"})
     socket.on("disconnect",async()=>{
         await account.updateOne({email: clientData.email},{socketId : null})
+    })
+
+
+    // 다이렉트 연결된 채널 join 만들기
+    socket.on("new-directChannel",(data)=>{
+        // 채널 방 번호, 사용자들 소켓 얻어오기
+        socket.join(data.channel);
+        console.log("rooms",socket.id,socket.rooms);
     })
 });
 // listen 

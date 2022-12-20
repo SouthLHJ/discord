@@ -1,16 +1,16 @@
 import { Divider,Box } from "@mui/material";
 import styles from "./header.module.css";
+import {MdAlternateEmail} from "react-icons/md"
 
 
-function DirectHeader() {
+function DirectHeader({user}) {
+
     return (
         <Box className={styles.header_box} >
             <Box className={styles.icon_box}>
-                <p className={styles.icon_text}>유저 이름</p>
+                <MdAlternateEmail className={styles.icon_text}/>
+                <span className={styles.icon_text}>{user.name}</span>
             </Box>
-
-            <Divider orientation="vertical" sx={{ borderColor: "gray" }} />
-
         </Box>
     );
 }
