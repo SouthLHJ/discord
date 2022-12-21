@@ -1,6 +1,6 @@
 import styles from "./[channelId].module.css"
 import { Box, Divider } from "@mui/material";
-import { useEffect,useContext,useState,useRef } from "react";
+import { useEffect,useContext,useState,useRef, forwardRef } from "react";
 import {AiFillPlusCircle} from "react-icons/ai"
 import {IoMdSend} from "react-icons/io"
 import {FaDiscord, FaUserFriends} from "react-icons/fa"
@@ -11,7 +11,7 @@ import { DirectMessageContext } from "../../../../pages/channels/@me";
 import {InputField} from "../mainbody/inputfield.jsx"
 import DirectChat from "./chat";
 import DirectHeader from "./header";
-import { NewMessageAPI } from "../../../../customs/api/chat";
+import { MessageLogAPI, NewMessageAPI } from "../../../../customs/api/chat";
 import { UserContext } from "../../../..";
 
 
@@ -27,6 +27,7 @@ function DirectChannelMain() {
     const [channelData, setChannelData] = useState();
     const [msgLog, setMsgLog] = useState([]);
     const [text, setText] = useState("");
+    const ref= useRef();
     
     useEffect(()=>{
         // 채널 정보 얻어오기 msgCtx , 상대방 정보 얻어오기 FriendsCtx
@@ -42,16 +43,23 @@ function DirectChannelMain() {
             }
         })
         // 채팅 로그 얻어오기
-
-    },[msgList])
-
-    useEffect(()=>{
+        msgLogInit();
+        //  ================== 소켓 통신
         if(socket){
             // 새로운 메세지 생성 알람
             socket.on("new-message",(data)=>{
                 console.log("new-message", data);
                 setMsgLog(current=>[...current,data])
+                ref.current.scrollIntoView({ behavior: 'smooth', block: 'end', inline: 'nearest' });  
             })
+        }
+
+
+        async function msgLogInit(){
+            const token = localStorage.getItem("token")
+            const rst = await MessageLogAPI(JSON.parse(token), channel)
+            setMsgLog(rst.datas);
+            ref.current.scrollIntoView({ behavior: 'smooth', block: 'end', inline: 'nearest' });  
         }
     },[socket])
 
@@ -62,6 +70,9 @@ function DirectChannelMain() {
     
     // func
     const onSendMessage = async()=>{
+        if(text.length == 0){
+            return;
+        }
         const token = localStorage.getItem("token")
         const rst = await NewMessageAPI(JSON.parse(token),channel,text)
 
@@ -71,22 +82,24 @@ function DirectChannelMain() {
             console.log("/channels/@me onSendmessage err : ", rst.error)
         }
     }
-
     
 
     return (
         <Box sx={{width: "100%"}}> 
+            
             <Box sx={{width: "100%"}}> 
                 <DirectHeader user={user2Data}  />
             </Box>
 
             <Box sx={isMobile ?
-                [{width: "100%", minHeight : "calc(100vh - 156px)" , overflowY : "scroll" ,border :"1px solid" },{"&::-webkit-scrollbar" : {display: "none"}}]
+                [{width: "100%", height : "calc(100vh - 156px)" , overflowY : "scroll"},{"&::-webkit-scrollbar" : {display: "none"}}]
                 :
-                [{width: "100%", minHeight : "calc(100vh - 106px)" , overflowY : "scroll" ,border :"1px solid" },{"&::-webkit-scrollbar" : {display: "none"}}]
-                }>
+                [{width: "100%", height : "calc(100vh - 106px)" , overflowY : "scroll"},{"&::-webkit-scrollbar" : {display: "none"}}]
+            }>
                 <DirectChat channel={channelData} user={user} user2Data={user2Data} msgLog={msgLog}/>
+                <Box ref={ref} sx={{display :"none"}} ></Box>
             </Box>
+            
 
             <Box sx={isMobile ?
                 {width : "100%",position: "absolute", bottom:57 , minHeight:"52px"}

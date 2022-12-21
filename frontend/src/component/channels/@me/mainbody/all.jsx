@@ -12,34 +12,40 @@ import { FriendsContext, isMobileContext } from "../../../../pages/channels";
 import CustomBadge from '../../../../customs/badge';
 import { IsDirectAPI, NewChannelAPI } from '../../../../customs/api/channel';
 import { useNavigate } from 'react-router-dom';
+import { DirectMessageContext } from '../../../../pages/channels/@me';
 
 function AllFriendsMe() {
     const navigate = useNavigate();
     const mobileCtx = useContext(isMobileContext);
     const friendsCtx = useContext(FriendsContext);
+    const DmsgCtx = useContext(DirectMessageContext);
 
     const [username , setUsername] =useState();
 
     const onMessage = async(user2Email)=>{
-        const token = localStorage.getItem("token")
-        // 채널이 있는지 확인하고.
-        const rst = await IsDirectAPI(JSON.parse(token), user2Email);
-        console.log(rst);
-        if(rst.result){
-            // 채널이 있다면 이동. 없다면 생성하고 이동
-            if(rst?.data){
-                navigate(`/channels/@me/${rst.data._id}`)
-            }else{
-                const rst2  = await NewChannelAPI(JSON.parse(token),user2Email);
-                
-                if(rst2.result){
-                    navigate(`/channels/@me/${rst2.datas._id}`)
-                }else{
-                    console.log("/channels/@me newchannel server Err : ", rst.error)
+        let isC = null;
+        if(DmsgCtx.msgList.length !== 0 ){
+            DmsgCtx.msgList.forEach(msg=>{
+                // console.log(msg.joiner.includes(user2Email))
+                if(msg.joiner.includes(user2Email)){
+                    // console.log(msg._id)
+                    isC = msg._id;
                 }
-            }
+            })
+        }
+        // console.log(isC);
+        if(isC){
+            navigate(`/channels/@me/${isC}`)
         }else{
-            console.log("/channels/@me isdirect server Err : ", rst.error)
+            const token = localStorage.getItem("token")
+            const rst2  = await NewChannelAPI(JSON.parse(token),user2Email);
+            
+            if(rst2.result){
+                DmsgCtx.setMsgList(current =>[...current,rst2])
+                navigate(`/channels/@me/${rst2.datas._id}`)
+            }else{
+                console.log("/channels/@me newchannel server Err : ", rst2.error)
+            }
         }
     }
 

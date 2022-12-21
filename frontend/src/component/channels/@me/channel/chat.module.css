@@ -13,9 +13,26 @@
 .first_text{
     color: gray;
 }
+
+.message_box{
+    padding: 12px;
+}
+
 .author_icon {
     font-size : 30px;
     color : white;
+}
+
+.author_name{
+    color: white;
+    font-weight: bold;
+}
+.timestamp{
+    color: gray;
+    font-size: 12px;
+}
+.content{
+    color: white
 }
 
 @media screen and (max-width : 400px) {

@@ -16,7 +16,7 @@ router.use(async(req,res,next)=>{
         user = data;
         next();
     }catch(e){
-        console.log(e.message)
+        console.log("channels use",e.message)
     }
 })
 
@@ -50,7 +50,7 @@ router.post("/isdirect",async(req,res)=>{
     try{
         // 계정과 관계가 되어있는 사람들 중에, 채널이 있는지 확인한다.
         const datas = await relationship.find({$or : [{user1: user.email},{user2: user.email}]})
-        // console.log()
+        console.log(datas)
         const channelList =[];
         for(let i=0; i<datas.length; i++){
             if(datas[i]?.channel){
@@ -58,7 +58,7 @@ router.post("/isdirect",async(req,res)=>{
                 channelList.push(chan)
             }
         }
-        
+        // console.log(channelList)
         return res.status(201).json({result : true, datas : channelList})
     }catch(e){
         return res.status(422).json({result : false, error : e.message})
@@ -80,7 +80,7 @@ router.post("/:channel/message", async(req,res)=>{
         
         const io = req.app.get("io");
         // 서버에 만들어놓은 채널 방에 있는 소켓 유저들에게 생성된 메세지 전송
-        console.log(io.in(channel))
+        // console.log(io.in(channel))
         io.in(channel).emit("new-message", rst);
 
         return res.status(201).json({result : true, datas : rst})
@@ -92,7 +92,17 @@ router.post("/:channel/message", async(req,res)=>{
 
 // 메세지 로그
 router.post("/:channel/message-log",async(req,res)=>{
-      
+    const channel = req.params.channel;
+    // console.log(channel)
+    try{
+        const datas = await chat.find({channel : channel}).sort("timeStamp").lean();
+
+        return res.status(201).json({result : true, datas : datas})
+    }catch(e){
+
+        return res.status(422).json({result : false, error : e.message})
+    }
+
 })
 
 

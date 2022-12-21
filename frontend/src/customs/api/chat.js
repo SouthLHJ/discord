@@ -19,7 +19,18 @@ export const NewMessageAPI = async(token,channelId,content)=>{
     return await rcv.json()
 }
 
+/** 작성한 사람 토큰( ), 채널 아이디(리스트 찾기)
+ * 
+ *  return {result : , datas : {_id, channel, author, content, timeStamp}}
+ */
+export const MessageLogAPI = async(token,channelId)=>{
+    console.log(token)
+    const rcv = await fetch(serverURL+`/channels/${channelId}/message-log`,{
+        ...postMethod,
+        body : JSON.stringify({
+            token,
+        })
+    })
 
-export const MessageLogAPI = async()=>{
-    
+    return await rcv.json();
 }

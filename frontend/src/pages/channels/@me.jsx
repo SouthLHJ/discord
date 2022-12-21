@@ -17,6 +17,10 @@ const PathMe = ()=>{
     // console.log(socketCtx.socket)
     useEffect(()=>{
         msgInit();
+    },[])
+
+
+    useEffect(()=>{
         // console.log("??")
         if(socketCtx.socket){
             // 원래 있던 다이렉트 방을 서버 sockect room에 추가하기
@@ -33,13 +37,6 @@ const PathMe = ()=>{
         }
     },[socketCtx.socket])
     
-    useEffect(()=>{
-        if(msgList.length !==0){
-            msgList.forEach(one=>{
-                socketCtx.socket.emit("new-directChannel",({channel : one._id}))
-            })
-        }
-    },[])
 
     async function msgInit(){
         const token = localStorage.getItem("token")

@@ -3,7 +3,6 @@ import { CustomColor } from "../../../customs/colors";
 import styles from "./subbarme.module.css"
 import {FaDiscord, FaUserFriends} from "react-icons/fa"
 import { useEffect } from "react";
-import { IsDirectAPI } from "../../../customs/api/channel";
 import { useContext } from "react";
 import { DirectMessageContext } from "../../../pages/channels/@me";
 import CustomBadge from "../../../customs/badge";

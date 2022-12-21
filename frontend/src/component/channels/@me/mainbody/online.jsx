@@ -40,6 +40,7 @@ function OnlineMe() {
                 }
             })
         }
+        // console.log(isC);
         if(isC){
             navigate(`/channels/@me/${isC}`)
         }else{

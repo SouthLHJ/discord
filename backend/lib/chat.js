@@ -13,5 +13,7 @@ const chatSchema = new mongoose.Schema({
  *  author : 발언자
  * 
  *  content : 내용
+ * 
+ *  timeStamp : 작성 시간대
  */
 export default mongoose.model("chat",chatSchema)
