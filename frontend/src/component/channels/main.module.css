@@ -1,5 +1,5 @@
 .box {
-    width: calc(100% - 356px );
+    width: calc(100% - ( 80px + 250px));
     height: 100vh;
     display:  flex;
     flex-direction: column;

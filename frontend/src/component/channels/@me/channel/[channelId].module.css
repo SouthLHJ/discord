@@ -1,0 +1,12 @@
+.send_icon{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width : 35px;
+    height : 30px;
+    border-radius: 40%;
+    padding : 1px;
+    background-color : var(--main-color);
+    cursor: pointer;
+}
+

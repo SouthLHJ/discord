@@ -1,0 +1,30 @@
+.first_box{
+    padding: 12px;
+}
+.avatar_icon {
+    font-size : 45px;
+    color : white;
+}
+.user_name{
+    color: white;
+    font-weight: bold;
+    font-size: 30px;
+}
+.first_text{
+    color: gray;
+}
+.author_icon {
+    font-size : 30px;
+    color : white;
+}
+
+@media screen and (max-width : 400px) {
+    .user_name{
+        color: white;
+        font-size: 30px;
+    }
+    .first_text{
+        color: gray;
+        font-size: 14px;
+    }
+}

@@ -19,6 +19,7 @@ export const InputField = styled((props) => (
         color : "lightgray",
         borderColor : CustomColor.darkgray,
         backgroundColor : CustomColor.darkgray,
+        
         '& .Mui-focused.MuiOutlinedInput-notchedOutline' :{
             borderColor: CustomColor.darkgray,
             backgroundColor : CustomColor.darkgray,

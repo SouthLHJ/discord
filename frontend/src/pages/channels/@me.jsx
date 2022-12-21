@@ -19,7 +19,7 @@ const PathMe = ()=>{
         msgInit();
         // console.log("??")
         if(socketCtx.socket){
-            // 원래 있던 다이렉트 방
+            // 원래 있던 다이렉트 방을 서버 sockect room에 추가하기
             if(msgList.length !==0){                
                 const channels = msgList.map(one=>{
                     return one._id

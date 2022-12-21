@@ -68,24 +68,32 @@ router.post("/isdirect",async(req,res)=>{
 // 메세지 등록
 router.post("/:channel/message", async(req,res)=>{
     const channel = req.params.channel;
-
-    const newChat = {
-
-    }
     try{
-        const io = req.app.get("io");
+    
+        const newChat = {
+            channel : channel,
+            author : user.email,
+            content : req.body.content,
+            timeStamp : Date.now()
+        }
+        const rst = await chat.create(newChat)
         
-        io.to(channel).emit("new-message", one);
+        const io = req.app.get("io");
+        // 서버에 만들어놓은 채널 방에 있는 소켓 유저들에게 생성된 메세지 전송
+        console.log(io.in(channel))
+        io.in(channel).emit("new-message", rst);
 
-        await chat.create({})
-
-        return res.status(201).json({result : true, datas : datas})
+        return res.status(201).json({result : true, datas : rst})
     }catch(e){
         return res.status(422).json({result : false, error : e.message})
     }
 
 })
 
+// 메세지 로그
+router.post("/:channel/message-log",async(req,res)=>{
+      
+})
 
 
 export default router;

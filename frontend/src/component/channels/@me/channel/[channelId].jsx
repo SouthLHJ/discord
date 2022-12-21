@@ -1,23 +1,32 @@
-import { Box } from "@mui/material";
-import { useEffect } from "react";
-import { useContext } from "react";
-import { useState } from "react";
-import { useRef } from "react";
+import styles from "./[channelId].module.css"
+import { Box, Divider } from "@mui/material";
+import { useEffect,useContext,useState,useRef } from "react";
+import {AiFillPlusCircle} from "react-icons/ai"
+import {IoMdSend} from "react-icons/io"
+import {FaDiscord, FaUserFriends} from "react-icons/fa"
 import { useParams } from "react-router-dom";
-import { FriendsContext, SocketContext } from "../../../../pages/channels";
+import { CustomColor } from "../../../../customs/colors";
+import { FriendsContext, isMobileContext, SocketContext } from "../../../../pages/channels";
 import { DirectMessageContext } from "../../../../pages/channels/@me";
+import {InputField} from "../mainbody/inputfield.jsx"
 import DirectChat from "./chat";
 import DirectHeader from "./header";
+import { NewMessageAPI } from "../../../../customs/api/chat";
+import { UserContext } from "../../../..";
 
 
 function DirectChannelMain() {
+    const {isMobile} = useContext(isMobileContext)
     const {socket} = useContext(SocketContext);
     const {friends} = useContext(FriendsContext);
     const {msgList} = useContext(DirectMessageContext);
+    const {user} = useContext(UserContext);
     const {channel} = useParams();
     
     const [user2Data, setUser2Data] = useState();
     const [channelData, setChannelData] = useState();
+    const [msgLog, setMsgLog] = useState([]);
+    const [text, setText] = useState("");
     
     useEffect(()=>{
         // 채널 정보 얻어오기 msgCtx , 상대방 정보 얻어오기 FriendsCtx
@@ -36,15 +45,67 @@ function DirectChannelMain() {
 
     },[msgList])
 
-    console.log(user2Data, channelData)
+    useEffect(()=>{
+        if(socket){
+            // 새로운 메세지 생성 알람
+            socket.on("new-message",(data)=>{
+                console.log("new-message", data);
+                setMsgLog(current=>[...current,data])
+            })
+        }
+    },[socket])
+
+    if(!user2Data){
+        return(null)
+    }
+    // console.log(user2Data, channelData)
+    
+    // func
+    const onSendMessage = async()=>{
+        const token = localStorage.getItem("token")
+        const rst = await NewMessageAPI(JSON.parse(token),channel,text)
+
+        if(rst.result){
+            setText("")
+        }else{
+            console.log("/channels/@me onSendmessage err : ", rst.error)
+        }
+    }
+
+    
 
     return (
         <Box sx={{width: "100%"}}> 
             <Box sx={{width: "100%"}}> 
                 <DirectHeader user={user2Data}  />
             </Box>
-            <Box sx={[{width: "100%", minHeight : "calc(100vh - 106px)" , overflowY : "scroll" ,border :"1px solid" },{"&::-webkit-scrollbar" : {display: "none"}}]}>
-                <DirectChat channel={channelData} user={user2Data}/>
+
+            <Box sx={isMobile ?
+                [{width: "100%", minHeight : "calc(100vh - 156px)" , overflowY : "scroll" ,border :"1px solid" },{"&::-webkit-scrollbar" : {display: "none"}}]
+                :
+                [{width: "100%", minHeight : "calc(100vh - 106px)" , overflowY : "scroll" ,border :"1px solid" },{"&::-webkit-scrollbar" : {display: "none"}}]
+                }>
+                <DirectChat channel={channelData} user={user} user2Data={user2Data} msgLog={msgLog}/>
+            </Box>
+
+            <Box sx={isMobile ?
+                {width : "100%",position: "absolute", bottom:57 , minHeight:"52px"}
+                :
+                {width : "100%",position: "absolute", bottom:0 ,minHeight:"60px"}
+            }>
+                <InputField
+                    value={text}
+                    onChange={(evt)=>setText(evt.target.value)}
+                    fullWidth
+                    multiline={true}
+                    maxRows={2}
+                    sx={{height : "100%"}}
+                    InputProps={{
+                        sx : [{height : "60px"},isMobile &&{height : "54px" }],
+                        startAdornment: <Box onClick={()=>{}}><AiFillPlusCircle style={{color: "gray", fontSize :"30px", cursor : "pointer"}}/></Box>,
+                        endAdornment : <Box className={styles.send_icon} onClick={()=>onSendMessage()}><IoMdSend/></Box>
+                    }}
+                />
             </Box>
         </Box>
       );

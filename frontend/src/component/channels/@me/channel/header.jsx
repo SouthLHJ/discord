@@ -8,7 +8,7 @@ function DirectHeader({user}) {
     return (
         <Box className={styles.header_box} >
             <Box className={styles.icon_box}>
-                <MdAlternateEmail className={styles.icon_text}/>
+                <MdAlternateEmail style={{color : "gray", fontSize :"20px"}}/>
                 <span className={styles.icon_text}>{user.name}</span>
             </Box>
         </Box>

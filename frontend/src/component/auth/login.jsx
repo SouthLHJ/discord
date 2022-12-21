@@ -29,8 +29,8 @@ const Login = ()=>{
         const rcv = await fetch(`${process.env.REACT_APP_SERVER_URI}/auth/login`,{
             method : "post",
             body : JSON.stringify({
-                email,
-                pw,
+                email: email.trim(" "),
+                pw : pw.trim(" "),
             }),
             headers : {
                 "content-type" : "application/json"
