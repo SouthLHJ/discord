@@ -46,7 +46,7 @@ function AppProvider({children}) {
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
-  <BrowserRouter>
+  <BrowserRouter basename='/discoo'>
       <AppProvider>
         <Routes>
           <Route path="/" element={<App />} />
