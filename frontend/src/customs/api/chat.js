@@ -23,12 +23,13 @@ export const NewMessageAPI = async(token,channelId,content)=>{
  * 
  *  return {result : , datas : {_id, channel, author, content, timeStamp}}
  */
-export const MessageLogAPI = async(token,channelId)=>{
+export const MessageLogAPI = async(token,channelId,skip)=>{
     console.log(token)
     const rcv = await fetch(serverURL+`/channels/${channelId}/message-log`,{
         ...postMethod,
         body : JSON.stringify({
             token,
+            skip
         })
     })
 

@@ -27,8 +27,15 @@ function DirectChannelMain() {
     const [channelData, setChannelData] = useState();
     const [msgLog, setMsgLog] = useState([]);
     const [text, setText] = useState("");
+    const skip = useRef(0);
     const ref= useRef();
     
+    useEffect(()=>{
+        if(ref.current){
+            ref.current.scrollIntoView({ behavior: 'smooth', block: 'end', inline: 'nearest' }); 
+        }
+    },[msgLog])
+
     useEffect(()=>{
         // 채널 정보 얻어오기 msgCtx , 상대방 정보 얻어오기 FriendsCtx
         msgList.forEach(one=>{
@@ -50,16 +57,16 @@ function DirectChannelMain() {
             socket.on("new-message",(data)=>{
                 console.log("new-message", data);
                 setMsgLog(current=>[...current,data])
-                ref.current.scrollIntoView({ behavior: 'smooth', block: 'end', inline: 'nearest' });  
+                
             })
         }
 
 
         async function msgLogInit(){
             const token = localStorage.getItem("token")
-            const rst = await MessageLogAPI(JSON.parse(token), channel)
-            setMsgLog(rst.datas);
-            ref.current.scrollIntoView({ behavior: 'smooth', block: 'end', inline: 'nearest' });  
+            const rst = await MessageLogAPI(JSON.parse(token), channel, skip.current)
+            setMsgLog(rst.datas.reverse());
+            // ref.current.scrollIntoView({ behavior: 'smooth', block: 'end', inline: 'nearest' });  
         }
     },[socket])
 
@@ -82,11 +89,11 @@ function DirectChannelMain() {
             console.log("/channels/@me onSendmessage err : ", rst.error)
         }
     }
+
     
 
     return (
         <Box sx={{width: "100%"}}> 
-            
             <Box sx={{width: "100%"}}> 
                 <DirectHeader user={user2Data}  />
             </Box>
@@ -97,7 +104,7 @@ function DirectChannelMain() {
                 [{width: "100%", height : "calc(100vh - 106px)" , overflowY : "scroll"},{"&::-webkit-scrollbar" : {display: "none"}}]
             }>
                 <DirectChat channel={channelData} user={user} user2Data={user2Data} msgLog={msgLog}/>
-                <Box ref={ref} sx={{display :"none"}} ></Box>
+                <Box ref={ref} sx={{height : "0px"}}></Box>
             </Box>
             
 

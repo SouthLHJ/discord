@@ -93,9 +93,10 @@ router.post("/:channel/message", async(req,res)=>{
 // 메세지 로그
 router.post("/:channel/message-log",async(req,res)=>{
     const channel = req.params.channel;
+    const skip = req.body.skip;
     // console.log(channel)
     try{
-        const datas = await chat.find({channel : channel}).sort("timeStamp").lean();
+        const datas = await chat.find({channel : channel}).sort("-timeStamp").skip(skip).limit(50).lean();
 
         return res.status(201).json({result : true, datas : datas})
     }catch(e){
