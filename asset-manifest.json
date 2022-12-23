@@ -1,0 +1,13 @@
+{
+  "files": {
+    "main.css": "/discoo/static/css/main.b355dd31.css",
+    "main.js": "/discoo/static/js/main.a2cb2a86.js",
+    "index.html": "/discoo/index.html",
+    "main.b355dd31.css.map": "/discoo/static/css/main.b355dd31.css.map",
+    "main.a2cb2a86.js.map": "/discoo/static/js/main.a2cb2a86.js.map"
+  },
+  "entrypoints": [
+    "static/css/main.b355dd31.css",
+    "static/js/main.a2cb2a86.js"
+  ]
+}
