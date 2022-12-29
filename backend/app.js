@@ -43,7 +43,10 @@ io.on("connection", async(socket) => {
    
 
     const clientData = socket.handshake.query;
+    
     const rcv = await account.findOneAndUpdate({email : clientData.email },{socketId : socket.id},{returnDocument : "after"})
+    socket.userEmail = clientData.email;
+    console.log("connection : ", socket.userEmail);
     socket.on("disconnect",async()=>{
         await account.updateOne({email: clientData.email},{socketId : null})
     })
@@ -53,7 +56,7 @@ io.on("connection", async(socket) => {
     socket.on("new-directChannel",(data)=>{
         // 채널 방 번호, 사용자들 소켓 얻어오기
         socket.join(data.channel);
-        console.log("rooms",socket.id,socket.rooms);
+        console.log("new-directChannel : ", socket.userEmail, socket.rooms);
     })
 });
 // listen 

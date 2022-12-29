@@ -21,7 +21,6 @@ const PathMe = ()=>{
 
 
     useEffect(()=>{
-        // console.log("??")
         if(socketCtx.socket){
             // 원래 있던 다이렉트 방을 서버 sockect room에 추가하기
             if(msgList.length !==0){                
@@ -31,17 +30,22 @@ const PathMe = ()=>{
                 socketCtx.socket.emit("new-directChannel",({channel : channels}))
             }
             // 새로운 연결 발생 알람
-            socketCtx.socket.on("new-direct",(data)=>{
+            socketCtx.socket.on("new-diect",(data)=>{
                 setMsgList(current=> [...current,data])
             })
         }
-    },[socketCtx.socket])
+        return ()=>{
+            if(socketCtx.socket){
+                socketCtx.socket.off("new-diect");
+            }
+        }
+    },[socketCtx.socket,msgList])
     
 
     async function msgInit(){
         const token = localStorage.getItem("token")
         const rst = await IsDirectAPI(JSON.parse(token))
-        // console.log(rst);
+        console.log("/@me msgInit() : ",rst.datas);
         setMsgList(rst.datas)
     }
 

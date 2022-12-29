@@ -50,7 +50,7 @@ router.post("/isdirect",async(req,res)=>{
     try{
         // 계정과 관계가 되어있는 사람들 중에, 채널이 있는지 확인한다.
         const datas = await relationship.find({$or : [{user1: user.email},{user2: user.email}]})
-        console.log(datas)
+        // console.log(datas)
         const channelList =[];
         for(let i=0; i<datas.length; i++){
             if(datas[i]?.channel){
